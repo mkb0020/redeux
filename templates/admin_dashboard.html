@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - mkb0020{% endblock %}
+{% block description %}Administrative control center{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .admin-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .admin-title {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-size: 3rem;
+    background: linear-gradient(45deg, var(--ParticlePink), var(--NuclearFuscia), var(--AlphaAqua));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px var(--ParticleGlow3);
+    animation: neonPulse 2s ease-in-out infinite alternate;
+  }
+
+  .admin-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-admin {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(45deg, var(--VortexViolet), var(--NuclearFuscia));
+    color: var(--White);
+    border: 2px solid var(--ParticlePink);
+    border-radius: 10px;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--VortexGlow2);
+    display: inline-block;
+  }
+
+  .btn-admin:hover {
+    background: linear-gradient(45deg, var(--NuclearFuscia), var(--AlphaAqua));
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--NuclearGlow3);
+    color: var(--White);
+  }
+
+  .btn-logout {
+    background: linear-gradient(45deg, var(--RadiationRed), var(--ProtonPurple));
+  }
+
+  .btn-logout:hover {
+    background: linear-gradient(45deg, var(--ProtonPurple), var(--RadiationRed));
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .stat-card {
+    background: rgba(23, 0, 50, 0.6);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--ProtonPurple);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 16px var(--VortexGlow1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent, var(--NuclearGlow1), transparent 30%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px var(--PlasmaGlow2), 0 0 40px var(--NuclearGlow2);
+    border-color: var(--VortexViolet);
+  }
+
+  .stat-card:hover::before {
+    opacity: 0.15;
+    animation: rotate 4s linear infinite;
+  }
+
+  .stat-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .stat-card.disabled:hover {
+    transform: none;
+    box-shadow: 0 4px 16px var(--VortexGlow1);
+  }
+
+  @keyframes rotate {
+    100% { transform: rotate(360deg); }
+  }
+
+  .stat-card h3 {
+    color: var(--AlphaAqua);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px var(--AlphaGlow2);
+  }
+
+  .stat-number {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-size: 3rem;
+    color: var(--NuclearFuscia);
+    text-shadow: 0 0 20px var(--NuclearGlow2);
+    margin-bottom: 1rem;
+  }
+
+  .stat-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(131, 12, 222, 0.3);
+    border: 1px solid var(--VortexViolet);
+    border-radius: 8px;
+    color: var(--White);
+    text-decoration: none;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+
+  .stat-link:hover {
+    background: var(--VortexViolet);
+    box-shadow: 0 0 15px var(--VortexGlow2);
+    color: var(--White);
+  }
+
+  .stat-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .coming-soon-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--ProtonPurple);
+    color: var(--MutedGray);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-family: 'GothNerd', sans-serif;
+    margin-top: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'GothNerd', sans-serif;
+    font-size: 2rem;
+    color: var(--AlphaAqua);
+    margin: 3rem 0 1.5rem 0;
+    text-shadow: 0 0 15px var(--AlphaGlow2);
+  }
+
+  .data-table-card {
+    background: rgba(23, 0, 50, 0.6);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--VortexViolet);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px var(--VortexGlow2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .data-table-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent, var(--NuclearGlow1), transparent 30%);
+    opacity: 0.1;
+    animation: rotate 8s linear infinite;
+    pointer-events: none;
+  }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .admin-table thead tr {
+    background: rgba(55, 2, 90, 0.5);
+  }
+
+  .admin-table th {
+    padding: 1rem;
+    text-align: left;
+    color: var(--AlphaAqua);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 0.9rem;
+    border-bottom: 2px solid var(--VortexViolet);
+    text-transform: uppercase;
+  }
+
+  .admin-table td {
+    padding: 1rem;
+    color: var(--White);
+    font-family: Arial, sans-serif;
+    border-bottom: 1px solid rgba(131, 12, 222, 0.2);
+  }
+
+  .admin-table tbody tr {
+    transition: all 0.3s ease;
+  }
+
+  .admin-table tbody tr:hover {
+    background: rgba(131, 12, 222, 0.2);
+  }
+
+  .badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    font-family: 'GothNerd', sans-serif;
+    text-transform: uppercase;
+  }
+
+  .badge-unread, .badge-new {
+    background: var(--NuclearFuscia);
+    color: var(--White);
+    box-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .badge-read {
+    background: var(--ProtonPurple);
+    color: var(--MutedGray);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--MutedGray);
+    font-family: Arial, sans-serif;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 768px) {
+    .admin-title {
+      font-size: 2rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .admin-table {
+      font-size: 0.85rem;
+    }
+
+    .admin-table th,
+    .admin-table td {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+  <div class="admin-header">
+    <h1 class="admin-title"> WELCOME BACK, QUEEN!</h1>
+    <div class="admin-actions">
+      <a href="{{ url_for('admin_wishlist') }}" class="btn-admin">WISHLIST</a>
+      <a href="{{ url_for('admin_logout') }}" class="btn-admin btn-logout">LOGOUT</a>
+    </div>
+  </div>
+
+
+  <div class="stats-grid">
+    <div class="stat-card"> <!-- CONTACT ME-->
+      <h3>Contact Messages</h3>
+      <div class="stat-number">{{ stats.unread_contacts }}</div>
+      <a href="{{ url_for('admin_messages_suggestions') }}" class="stat-link">View All →</a>
+    </div>
+
+
+    <div class="stat-card"> <!-- SUPPORT TICKETS-->
+      <h3>Support Tickets</h3>
+      <div class="stat-number">{{ stats.new_support_tickets }}</div>
+      <a href="{{ url_for('admin_support') }}" class="stat-link">View All →</a>
+    </div>
+
+    <div class="stat-card">  <!-- CATASTROPHE FEEDBACK  -->
+      <h3>Game Reviews</h3>
+      <div class="stat-number">{{ stats.new_game_feedback }}</div>
+      <a href="{{ url_for('admin_game_feedback') }}" class="stat-link">View All →</a>
+    </div>
+
+    
+    <div class="stat-card disabled"> <!-- PLACEHOLDER -->
+      <h3>App/Website Requests</h3>
+      <div class="stat-number">0</div>
+      <span class="coming-soon-badge">Coming Soon</span>
+    </div>
+  </div>
+
+  <h2 class="section-title">Recent Contact Messages</h2> <!-- RECENT CONTACT SUBMISSIONS -->
+  <div class="data-table-card">
+    {% if stats.recent_contacts %}
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Message Preview</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for contact in stats.recent_contacts %}
+          <tr>
+            <td>{{ contact.timestamp.strftime('%m-%d-%Y') }}</td>
+            <td><strong>{{ contact.name }}</strong></td>
+            <td>{{ contact.email }}</td>
+            <td>{{ contact.message[:50] }}{% if contact.message|length > 50 %}...{% endif %}</td>
+            <td>
+              <span class="badge badge-{{ contact.status }}">{{ contact.status }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align: center; margin-top: 1.5rem; position: relative; z-index: 1;">
+      <a href="{{ url_for('admin_messages_suggestions') }}" class="btn-admin">View All Messages</a>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <p>No contact submissions yet.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <h2 class="section-title"> Recent Support Tickets</h2> <!-- RECENT SUPPORT TICKETS -->
+  <div class="data-table-card">
+    {% if stats.recent_support %}
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Page</th>
+            <th>Issue Preview</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ticket in stats.recent_support %}
+          <tr>
+            <td>{{ ticket.timestamp.strftime('%m-%d-%Y') }}</td>
+            <td><strong>{{ ticket.name }}</strong></td>
+            <td><span class="badge" style="background: var(--PlasmaPurple);">{{ ticket.page }}</span></td>
+            <td>{{ ticket.issue[:50] }}{% if ticket.issue|length > 50 %}...{% endif %}</td>
+            <td>
+              <span class="badge badge-{{ ticket.status }}">{{ ticket.status }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align: center; margin-top: 1.5rem; position: relative; z-index: 1;">
+      <a href="{{ url_for('admin_support') }}" class="btn-admin">View All Tickets</a>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <p>No support tickets yet.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <h2 class="section-title">Recent Game Reviews</h2> <!-- RECENT GAME FEEDBACK -->
+  <div class="data-table-card">
+    {% if stats.recent_feedback %}
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Rating</th>
+            <th>Review Preview</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for feedback in stats.recent_feedback %}
+          <tr>
+            <td>{{ feedback.timestamp.strftime('%m-%d-%Y') }}</td>
+            <td><strong>{{ feedback.name }}</strong></td>
+            <td>
+              <span style="color: var(--NuclearFuscia);">
+                {% for i in range(feedback.stars) %}⭐{% endfor %}
+              </span>
+            </td>
+            <td>{{ feedback.review[:50] }}{% if feedback.review|length > 50 %}...{% endif %}</td>
+            <td>
+              <span class="badge badge-{{ feedback.status }}">{{ feedback.status }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align: center; margin-top: 1.5rem; position: relative; z-index: 1;">
+      <a href="{{ url_for('admin_game_feedback') }}" class="btn-admin">View All Reviews</a>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <p>No game reviews yet.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
