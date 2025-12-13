@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block title %}Support - mkb0020{% endblock %}
+{% block description %}Technical support and issue reporting{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .support-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .hero-section h1 {
+      font-family: 'Orbitron', 'Courier New', monospace;
+      font-size: 3rem;
+      background: linear-gradient(45deg, var(--NuclearFuscia), #00FFFF, var(--NuclearFuscia));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 15px var(--NuclearGlow3);
+      margin-bottom: 1rem;
+      animation: neonPulse 2s ease-in-out infinite alternate;
+    }
+
+    .hero-section p {
+      color: var(--MutedGray);
+      font-size: 1.2rem;
+      font-family: Arial, sans-serif;
+    }
+
+    .support-card {
+      background: linear-gradient(135deg, 
+          rgba(55, 2, 90, 0.587), 
+          rgba(41, 0, 92, 0.562));
+      backdrop-filter: blur(10px);
+      border: 2px solid var(--VortexViolet);
+      border-radius: 18px;
+      padding: 30px;
+      margin-bottom: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      box-shadow: 0 8px 32px var(--VortexGlow2), inset 0 1px 0 var(--PlasmaGlow2);
+      z-index: 1;
+  }
+    .support-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, 
+          rgba(131, 12, 222, 0.15) 0%, 
+          transparent 70%);
+      opacity: 0;
+      transition: opacity 0.6s;
+      pointer-events: none;
+  }
+
+  .support-card:hover {
+      border-color: #A55AFF;
+      box-shadow: 
+          0 20px 50px rgba(131,12,222, 0.3),
+          0 0 40px rgba(165,90,255, 0.4);
+  }
+
+  .support-card:hover::before {
+      opacity: 1;
+      animation: hologramPulse 3s infinite;
+  }
+
+  @keyframes hologramPulse {
+      0%, 100% { transform: translate(20%, 20%) rotate(0deg); }
+      50% { transform: translate(30%, 30%) rotate(5deg); }
+  }
+  .alert-box {
+    background: rgba(115, 1, 50, 0.3);
+    border: 2px solid var(--RadiationRed);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 20px rgba(115, 1, 50, 0.4);
+  }
+
+  .alert-box h3 {
+    color: var(--NuclearFuscia);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .alert-box p {
+    color: var(--White);
+    margin: 0.5rem 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .form-group label {
+    display: block;
+    color: var(--AlphaAqua);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px var(--AlphaGlow1);
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.875rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--ProtonPurple);
+    border-radius: 8px;
+    color: var(--White);
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+    transition: all 0.3s ease;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--VortexViolet);
+    box-shadow: 0 0 20px var(--VortexGlow2);
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .form-group textarea {
+    min-height: 180px;
+    resize: vertical;
+    font-family: Arial, sans-serif;
+  }
+
+  .form-group select {
+    cursor: pointer;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 1.2rem;
+    background: linear-gradient(45deg, var(--RadiationRed), var(--NuclearFuscia));
+    color: var(--White);
+    border: 2px solid var(--ParticlePink);
+    border-radius: 12px;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(115, 1, 50, 0.5);
+    position: relative;
+    z-index: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+  }
+
+  .submit-btn:hover {
+    background: linear-gradient(45deg, var(--NuclearFuscia), var(--RadiationRed));
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 40px var(--NuclearGlow3);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  .required {
+    color: var(--NuclearFuscia);
+    margin-left: 0.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero-section h1 {
+      font-size: 2.5rem;
+      letter-spacing: 0.1rem;
+    }
+
+    .support-card {
+      padding: 1.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      font-size: 16px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block modal_title %} REPORTING PROBLEMS {% endblock %}
+
+{% block modal_content %}
+<h3>Thank you for letting me know about any issues you encounter!</h3>
+
+<h3>Examples of what to include:</h3>
+<ul>
+  <li><strong>Page/Feature:</strong> Which page or feature is causing issues?</li>
+  <li><strong>What Happened:</strong> Describe the problem in detail</li>
+  <li><strong>Expected Behavior:</strong> What should have happened?</li>
+  <li><strong>Steps to Reproduce:</strong> How can I recreate the issue?</li>
+  <li><strong>Do you want me to follow up with you?</strong> Or are you just letting me know?</li>
+</ul>
+
+{% endblock %}
+
+{% block content %}
+<div class="support-container">
+  <div class="hero-section">
+    <h1>REPORT SITE PROBLEMS</h1>
+  </div>
+
+  <div class="support-card">
+    <div class="alert-box">
+      <h3>⚠️ Emergency Protocol Active</h3>
+      <p>This form is for reporting issues with any of my pages.</p>
+      <p>For general questions, please use the <a href="{{ url_for('contact') }}" style="color: var(--AlphaAqua); text-decoration: underline;">Contact Form</a> instead.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('support') }}">
+      <div class="form-group">
+        <label for="name">Your Name <span class="required">*</span></label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name" 
+          placeholder="Enter your name"
+          required
+          maxlength="100"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email (Optional - if you would like a response)</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          placeholder="your.email@example.com"
+          maxlength="100"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="page">Problem Page <span class="required">*</span></label>
+        <select id="page" name="page" required>
+          <option value="" disabled selected>-- Select Page --</option>
+          <option value="Acoustic Kitty">CATastrophe2</option>
+          <option value="Acoustic Kitty">Acoustic Kitty</option>
+          <option value="Electric Kitty">Electric Kitty</option>
+          <option value="Blobs">Blobs</option>
+          <option value="D20 Roller">D20 Roller</option>
+          <option value="Fractals">Fractals</option>
+          <option value="Manifold">Calabi-Yau Manifold</option>
+          <option value="Other">Other / Multiple Pages</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="issue">Issue Description <span class="required">*</span></label>
+        <textarea 
+          id="issue" 
+          name="issue" 
+          placeholder="Describe what went wrong, what you expected to happen, and steps to reproduce the issue..."
+          required
+          maxlength="2000"
+        ></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        SEND DISTRESS SIGNAL
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const textarea = document.getElementById('issue');
+  const maxLength = 2000;
+
+  if (textarea) {
+    const counterDiv = document.createElement('div');
+    counterDiv.style.cssText = 'text-align: right; color: var(--MutedGray); font-size: 0.9rem; margin-top: 0.5rem; position: relative; z-index: 1;';
+    textarea.parentElement.appendChild(counterDiv);
+
+    const updateCounter = () => {
+      const remaining = maxLength - textarea.value.length;
+      counterDiv.textContent = `${remaining} characters remaining`;
+      
+      if (remaining < 100) {
+        counterDiv.style.color = 'var(--NuclearFuscia)';
+      } else {
+        counterDiv.style.color = 'var(--MutedGray)';
+      }
+    };
+
+    textarea.addEventListener('input', updateCounter);
+    updateCounter();
+  }
+
+  const form = document.querySelector('form');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      const submitBtn = form.querySelector('.submit-btn');
+      submitBtn.textContent = '📡 Transmitting...';
+      submitBtn.disabled = true;
+    });
+  }
+</script>
+{% endblock %}
