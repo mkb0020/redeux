@@ -1,0 +1,613 @@
+/* ============================ COLOR PALETTE ============================ */
+:root {
+  --text: rgba(223,223,242);
+  --BosonBlue: #170032;
+  --DarkMatterBlue: #0d001c;
+  --BosonShadow: #0e001d4d;
+  --BosonShadow2: #0e001dc8;
+  --ProtonPurple: #37025a;
+  --DarkMatterPurple: #1e0032;
+  --ProtonShadow: rgba(24, 1, 40, 0.116);
+  --ProtonShadow2: rgba(24, 1, 40, 0.758);
+  --VortexViolet: #830cde;
+  --VortexGlow1: rgba(131, 12, 222, 0.2);
+  --VortexGlow2: rgba(131,12,222, 0.5);
+  --VortexGlow3: rgba(95, 12, 158, 0.904);
+  --PlasmaPurple: #A55AFF;
+  --plasmaGlow1: rgba(165,90,255,0.2);
+  --PlasmaGlow2:rgba(165,90,255,0.5);
+  --PlasmaGlow3: rgba(165,90,255,0.8);
+  --NuclearFuscia:#dc4ce8;
+  --NuclearGlow1: rgba(219, 76, 232, 0.2);
+  --NuclearGlow2: rgba(220,76,232, 0.5);
+  --NuclearGlow3: rgba(220,76,232, 0.6);
+  --ParticlePink: #FFC7FF;
+  --ParticleGlow1: rgba(255,199,255, 0.2);
+  --ParticleGlow2: rgba(255,199,255, 0.5);
+  --ParticleGlow3: rgba(255,199,255, 0.8);
+  --RadiationRed: #730132;
+  --AlphaAqua: #67FEBD;
+  --AlphaGlow1: rgba(103,254,189, 0.2);
+  --AlphaGlow2: rgba(103,254,189, 0.5);
+  --AlphaGlow3: rgba(103,254,189, 0.8);
+  --AquaAura: #00ffff;
+  --AuraGlow1: rgba(0,255,255, 0.2);
+  --AuraGlow2: rgba(0,255,255, 0.5);
+  --AuraGlow3: rgba(0,255,255, 0.8);
+  --AtomicAqua: #9EFF9E;
+  --RadioactiveGreen: #58e84c;
+  --HalfLifeLime: #f3ffe5;
+  --UraniumGreen: #75FB1E;
+  --White: #FFFFFF; 
+  --Black: #000000;
+  --DarkDarkGray: #2A3439;
+  --DarkCooGray: #657383;
+  --Gray: #8391A1;
+  --CoolGray: #9090C0;
+  --MutedGray: #C4C3D0;
+  --LightGray: #DBE2E9;
+}
+
+/* ============================ FONTS ============================ */
+@font-face {
+  font-family: 'GothNerd'; 
+  src: url('../fonts/ScienceGothic.ttf') format('truetype'); 
+}
+
+@font-face {
+  font-family: 'SpaceLetters'; 
+  src: url('../fonts/Orbitron-Bold.ttf') format('truetype'); 
+}
+
+/* ============================ ANIMATIONS ============================ */
+@keyframes neonPulse {
+  from { 
+    text-shadow: 
+      0 0 10px var(--ParticleGlow2),
+      0 0 20px var(--ParticleGlow3),
+      0 0 30px var(--ParticleGlow3);
+  }
+  to { 
+    text-shadow: 
+      0 0 20px var(--ParticleGlow3),
+      0 0 30px var(--NuclearFuscia),
+      0 0 40px var(--NuclearFuscia);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px var(--NuclearFuscia); }
+  50% { box-shadow: 0 0 40px var(--NuclearFuscia); }
+}
+
+#stars {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0;
+        }
+.star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff;
+            animation: twinkle 4s infinite;
+        }
+@keyframes twinkle {
+            0%,100% { opacity: 0.4; transform: scale(1); }
+            50%     { opacity: 1; transform: scale(1.4); }
+        }
+
+/* ============================ BASE STYLES ============================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body, html {
+    margin: 0;
+    margin-top: 40px;
+    padding: 0;
+    min-height: 100vh; 
+    color: #FFFFFF;
+    background: linear-gradient(to bottom, #000000, #0f001e, #270142);
+}
+
+
+a { /* LINKS */
+    color: var(--AquaAura); 
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+a:hover {
+    color: var(--AlphaAqua);
+    text-decoration: underline;
+}
+
+/* ============================ NAVBAR ============================ */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  background: linear-gradient(135deg, var(--BosonShadow) 0%, var(--ProtonShadow) 50%, var(--BosonShadow) 100%);
+  backdrop-filter: blur(50px);
+  border-bottom: 1px solid var(--PlasmaGlow2);
+  box-shadow: 0 0 30px var(--PlasmaGlow2);
+  z-index: 1000;
+  padding: 0.5rem 0;
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  height: 40px;
+}
+
+.home-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.home-icon {
+  width: 39px;
+  height: 39px;
+  mask: none !important;
+  -webkit-mask: none !important;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.home-icon:hover {
+  transform: scale(1.5);
+  filter: drop-shadow(0 0 30px var(--AquaAura));
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.7rem;
+  background: linear-gradient(45deg, var(--ParticlePink), var(--NuclearFuscia), var(--AlphaAqua));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px var(--ParticleGlow3);
+  animation: neonPulse 2s ease-in-out infinite alternate;
+  font-family: 'SpaceLetters', sans-serif;
+  z-index: 900;
+  flex-shrink: 0;
+}
+
+/* ============================ HELP DROPDOWN ============================ */
+.help-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.help-icon {
+  width: 35px;
+  height: 35px;
+  background: transparent;
+  color: var(--AquaAura);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.help-icon:hover {
+  transform: scale(1.1) rotate(180deg);
+  box-shadow: 
+    0 0 25px var(--AquaAura),
+    0 0 35px var(--AlphaAqua);
+}
+
+.help-dropdown.active .help-icon {
+  background: var(--AquaAura);
+  color: var(--Black);
+}
+
+.question-mark {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--AquaAura);
+  text-shadow: 0 0 10px var(--AquaAura);
+  z-index: 2;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 10px;
+  border: 1px solid var(--AquaAura);
+  box-shadow: 0 3px 5px var(--AquaAura);
+  backdrop-filter: blur(15px);
+  min-width: 280px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+}
+
+.dropdown-menu button {
+  width: 100%;
+  padding: 16px 20px;
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  text-align: left;
+  font-family: 'GothNerd', sans-serif;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 1px solid var(--PlasmaGlow3);
+}
+
+.dropdown-menu button:hover {
+  background: rgba(101,115,131,0.25);
+  border-color: var(--PlasmaPurple);
+  box-shadow: 0 0 20px var(--VortexViolet);
+  text-shadow: none;
+  border-radius:12px;
+  padding-left: 30px;
+}
+
+.dropdown-menu button:last-child {
+  border-bottom: none;
+}
+
+.help-dropdown.active .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+/* ============================ LEFT DROPDOWN MENU ============================ */
+.left-dropdown {
+  position: relative;
+  display: inline-block;
+  z-index: 1001;
+}
+
+.menu-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-trigger .home-icon {
+  transition: all 0.3s ease;
+}
+
+.menu-trigger:hover .home-icon {
+  transform: scale(1.5);
+  filter: drop-shadow(0 0 30px var(--AquaAura));
+}
+
+.left-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 10px;
+  border: 1px solid var(--AquaAura);
+  box-shadow: 0 3px 5px var(--AquaAura);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  min-width: 200px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  padding: 12px 0;
+  z-index: 9999;
+}
+
+.left-dropdown.active .left-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(5px);
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  color: var(--White);
+  text-align: left;
+  text-decoration: none;
+  font-family: 'GothNerd', sans-serif;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+}
+
+.menu-item:hover {
+  background: rgba(101,115,131,0.25);
+  color: white;
+  padding-left: 30px;
+  box-shadow: 0 0 20px var(--VortexViolet);
+}
+
+.social-links {
+  margin-top: 20px;
+  padding: 15px 20px 10px;
+  border-top: 1px solid var(--PlasmaGlow3);
+  display: flex;
+  justify-content: space-around;
+  gap: 15px;
+}
+
+.social-icon {
+  width: 32px;
+  height: 32px;
+  filter: brightness(0) invert(1);
+  transition: all 0.3s ease;
+  opacity: 0.8;
+}
+
+.social-icon:hover {
+  opacity: 1;
+  transform: scale(1.1) translateY(-1px);
+  filter: drop-shadow(0 0 15px var(--AquaAura)) brightness(0) invert(1);
+}
+
+/* ============================ MODALS ============================ */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.151);
+  backdrop-filter: blur(10px);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto; /* ALLOWS FOR SCROLLING */
+}
+
+.modal-content {
+  background: linear-gradient(135deg, var(--DarkMatterPurple), var(--DarkMatterBlue));
+  border: 1px solid var(--AquaAura);
+  box-shadow: 0 0 50px var(--VortexViolet);
+  border-radius: 20px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.4s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*.modal-header {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, var(--ProtonPurple), var(--BosonBlue));
+  padding: 1.5rem;
+  border-bottom: 2px solid var(--VortexViolet);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  font-family: 'GothNerd', sans-serif;
+}*/
+
+.modal-header { /* HEADER & TITLE */
+    padding: 25px 30px 20px;
+    border-bottom: 1px solid var(--NuclearGlow2);
+    position: relative;
+}
+
+.modal-title {
+  font-family: 'SpaceLetters', sans-serif;
+  font-size: 2.1rem;
+  background: linear-gradient(45deg, var(--NuclearFuscia), var(--AquaAura), var(--NuclearFuscia));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  flex: 1;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  background: var(--RadiationRed);
+  color: var(--ParticlePink);
+  border: 2px solid var(--ParticlePink);
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.modal-close:hover {
+  background: var(--ParticlePink);
+  color: var(--BosonBlue);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 0 20px var(--ParticleGlow3);
+}
+
+.modal-body {
+  padding: 2rem;
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+.modal-body::-webkit-scrollbar { width: 12px; } /* SCROLLBAR */
+.modal-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+.modal-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(rgba(55, 2, 90, 0.35), rgba(41, 0, 92, 0.35));
+    border-radius: 10px;
+    border: 2px solid var(--DarkMatterBlue);
+    box-shadow: 0 0 15px var(--PlasmaGlow2);
+}
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+.modal-body { scrollbar-color: var(--NuclearFuscia) var(--DarkMatterBlue); scrollbar-width: thin; }
+
+
+.modal-body h3 {
+  color: var(--ParticlePink);
+  margin: 1.5rem 0 0.5rem 0;
+  font-size: 1.5rem;
+  text-shadow: 0 0 5px var(--NuclearGlow2);
+  font-family: 'GothNerd', sans-serif;
+}
+
+.modal-body p {
+  margin: 1.2rem 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.modal-body ul {
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.modal-body li {
+  margin: 0.5rem 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+ .mission-text {
+    background: linear-gradient(135deg, 
+        rgba(0,0,0, 0.653), 
+        rgba(0,0,0, 0.568));
+    border: 2px solid var(--NuclearFuscia);
+    border-radius: 30px;
+    padding: 10px;
+    margin-bottom: 2rem;
+    margin-top: 3rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    box-shadow: 0 5px 5px var(--NuclearGlow2);
+    z-index: 1;
+    text-align: center;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.2rem;
+}
+
+
+
+  .mission-text p {
+    color: var(--White);
+    margin: 0.5rem 0;
+    font-family: 'GothNerd', sans-serif;
+  }
+
+
+.btn-quantum-pulse {
+  background: linear-gradient(45deg, var(--VortexViolet), var(--NuclearFuscia));
+  color: var(--White);
+  border: 2px solid var(--ParticlePink);
+  padding: 12px 24px;
+  font-family: 'GothNerd', sans-serif;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: block;
+  margin: 2rem auto;
+  box-shadow: 0 0 20px var(--VortexGlow2);
+}
+
+.btn-quantum-pulse:hover {
+  background: linear-gradient(45deg, var(--NuclearFuscia), var(--AlphaAqua));
+  transform: scale(1.05);
+  box-shadow: 0 0 40px var(--NuclearGlow3);
+}
+
+/* ============================ BACK TO TOP BUTTON ============================ */
+.floating-back-to-top {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background: #000;
+  color: var(--NuclearFuscia);
+  border: 3px solid var(--NuclearFuscia);
+  padding: 14px 14px;
+  font-family: 'GothNerd', sans-serif;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 99999;
+  box-shadow: 0 0 30px var(--NuclearFuscia);
+  border-radius: 50px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.4s ease;
+  animation: pulseGlow 2s infinite;
+}
+
+.floating-back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.floating-back-to-top:hover {
+  background: var(--NuclearFuscia);
+  color: #000;
+  transform: translateY(0) scale(1.1);
+  box-shadow: 0 0 50px var(--NuclearFuscia);
+}
+
+/* ============================ RESPONSIVE ============================ */
+@media (max-width: 768px) {
+  .modal-content {
+    margin: 10px;
+    max-height: 95vh;
+  }
+
+  .modal-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* ============================ UTILITY CLASSES ============================ */
+.page-content {
+  margin-top: 65px;
+  padding: 20px;
+}
