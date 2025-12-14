@@ -3,10 +3,12 @@
   --text: rgba(223,223,242);
   --BosonBlue: #170032;
   --DarkMatterBlue: #0d001c;
+  --DarkMatterBlue2: #0d001c8f;
   --BosonShadow: #0e001d4d;
   --BosonShadow2: #0e001dc8;
   --ProtonPurple: #37025a;
   --DarkMatterPurple: #1e0032;
+   --DarkMatterPurple2: #1e003288;
   --ProtonShadow: rgba(24, 1, 40, 0.116);
   --ProtonShadow2: rgba(24, 1, 40, 0.758);
   --VortexViolet: #830cde;
@@ -312,7 +314,7 @@ a:hover {
   box-shadow: 0 3px 5px var(--AquaAura);
   backdrop-filter: blur(15px);
   border-radius: 15px;
-  min-width: 200px;
+  min-width: 300px;
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
