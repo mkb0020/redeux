@@ -1,0 +1,509 @@
+{% extends "base.html" %}
+{% block title %}mkb0020{% endblock %}
+{% block description %}Professional background and experience{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .hero-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.562);
+        backdrop-filter: blur(10px);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        overflow-y: auto; 
+  }  
+
+  .hero-modal.active {
+    display: flex;
+    z-index:10000;
+  }
+
+  .hero-modal-content {
+    background: linear-gradient(135deg, var(--BosonBlue), var(--Black));
+    border: 3px solid var(--VortexViolet);
+    box-shadow: 0 0 50px var(--VortexGlow3);
+    border-radius: 20px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 75vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.4s ease;
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hero-modal-header {
+    top: 0;
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--VortexViolet);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .hero-modal-title {
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.8rem;
+    color: var(--AlphaAqua);
+    margin: 0;
+    text-shadow: 0 0 15px var(--AlphaGlow2);
+  }
+
+  .hero-modal-close {
+    background: var(--RadiationRed);
+    color: var(--ParticlePink);
+    border: 2px solid var(--ParticlePink);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .hero-modal-close:hover {
+    background: var(--ParticlePink);
+    color: var(--BosonBlue);
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 0 20px var(--ParticleGlow3);
+  }
+
+  .hero-modal-body {
+    padding: 2rem;
+    color: var(--White);
+    font-family: Arial, sans-serif;
+    line-height: 1.8;
+  }
+
+  .hero-modal-body h3 {
+    color: var(--NuclearFuscia);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.5rem;
+    margin: 1.5rem 0 1rem 0;
+    text-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .hero-modal-body ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero-modal-body li {
+    margin: 0.75rem 0;
+  }
+
+  .hero-modal-body strong {
+    color: var(--ParticlePink);
+  }
+
+  @media (max-width: 768px) {
+    .hero-section h1 {
+      font-size: 2.5rem;
+    }
+
+    .summary-card {
+      padding: 1.5rem;
+    }
+  }
+
+  .summary-card {
+    background: linear-gradient(135deg, rgba(23, 0, 50, 0.8), rgba(0, 0, 30, 0.9));
+    backdrop-filter: blur(20px);
+    border: 10px solid #830CDE; 
+    border-radius: 24px;
+    padding: 2rem;
+    margin: 0rem auto;
+    max-width: 520px; 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 40px #830CDE, 0 0 80px rgba(131, 12, 222, 0.6);
+    position: relative;
+    overflow: hidden;
+  }
+ .summary-card:hover {
+    box-shadow: 0 0 40px var(--PlasmaGlow2);
+  }
+
+  .summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.112), transparent);
+    transition: left 0.6s;
+  }
+
+  .summary-card:hover::before {
+    left: 100%;
+  }
+
+  .pokemon-art-container {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .pokemon-art-frame {
+    border: 6px solid #830CDE;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 40px #830CDE, inset 0 0 20px rgba(131, 12, 222, 0.5);
+  }
+
+  .pokemon-art {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .pokemon-art::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 200%;
+    background: linear-gradient(transparent, rgba(255, 255, 255, 0.103), transparent);
+    animation: scan-line 5s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes scan-line {
+    0% { top: -100%; }
+    100% { top: 100%; }
+  }
+
+  .pokemon-name {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 3px solid var(--NuclearFuscia);
+    border-radius: 50px;
+    padding: 5px 10px;
+    color: #FFC7FF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 0 20px #FFC7FF;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pokemon-hp {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 3px solid var(--NuclearFuscia);
+    border-radius: 50px;
+    padding: 3px 7px;
+    color: #FFC7FF;
+    font-weight: bold;
+    font-size: 1.2rem;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 0 20px #FFC7FF;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pokemon-hp img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .pokemon-stats-box {
+    background: var(--ParticlePink);
+    padding: 0.3rem;
+    margin: 1rem 0;
+    text-align: center;
+    color: #000000;
+    font-size: 1rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+  }
+
+  .pokemon-attacks {
+    margin: 0.7rem 0;
+  }
+
+  .attack-card {
+    background: linear-gradient(135deg, var(--DarkMatterPurple2), var(--DarkMatterBlue2));
+    border: 3px solid #00000000;
+    border-radius: 12px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+    color: #FFFFFF;
+    font-weight: bold;
+  }
+
+  .attack-energy {
+    display: flex;
+    gap: 6px;
+  }
+
+  .attack-energy img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .attack-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.5rem;
+    color: var(--AlphaAqua);
+    font-family: 'GothNerd';
+  }
+
+
+  .attack-card:hover {
+    transform: scale(1.03) translateY(-4px);
+    box-shadow: 0 0 40px var(--NuclearFuscia);
+  }
+
+  .attack-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.062), transparent);
+    transition: left 0.6s;
+  }
+
+  .attack-card:hover::before {
+    left: 100%;
+  }
+
+  .pokemon-bottom-divider {
+    height: 3px;
+    background: var(--NuclearFuscia);
+    margin: 0.5rem 0;
+    box-shadow: 0 0 5px var(--NuclearFuscia);
+  }
+
+  .pokemon-bottom-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 0.3rem 0;
+  }
+
+  .bottom-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #FFC7FF;
+    font-size: 0.9rem;
+  }
+
+  .bottom-stat img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .summary-card {
+      max-width: 380px;
+      padding: 1rem;
+    }
+    .pokemon-art {
+      height: 300px;
+    }
+  }
+</style>
+{% endblock %}
+{% block modal_title %} WELCOME TO MY VIRTUAL PLAYGROUND {% endblock %}
+
+{% block modal_content %}
+<h3>Thanks for stopping by!</h3>
+
+                <p><strong>Click around and explore my creations and experiments I’ve been working on throughout my coding journey!</strong></p>
+                <p>This portfolio was designed to be <strong>fun</strong> and <strong>interactive</strong>!  I've included projects that you can take for a spin yourself rather than listening to me ramble about them in a demo video.</p>   
+                <p>You’ll find everything from practical tools to playful side-quests and mezmerizing visual experiments. </p>
+        {% endblock %}
+
+
+{% block content %}
+
+<div class="summary-card">
+  <div class="pokemon-art-container">
+    <div class="pokemon-name">
+      MK BARRIAULT
+    </div>
+
+    <div class="pokemon-hp">
+      <img src="static/images/hp-icon.png" alt="HP"> 200
+    </div>
+
+    <div class="pokemon-art-frame">
+      <img src="{{ url_for('static', filename='images/headshot1.JPEG') }}" alt="MK Barriault - Fire Type" class="pokemon-art">
+    </div>
+  </div>
+
+  <div class="pokemon-stats-box">
+    Click below to view details
+  </div>
+
+      <div class="attack-card" data-modal="AboutSite">
+      <div class="attack-energy">
+        <img src="static/images/attack-icon.png" alt="Fire">
+        <img src="static/images/attack-icon.png" alt="Fire">
+      </div>
+      <div class="attack-info">
+        <h3>About This Site</h3>
+      </div>
+    </div>
+  
+  <div class="pokemon-attacks">
+    <div class="attack-card" data-modal="AboutMe">
+      <div class="attack-energy">
+        <img src="static/images/attack2-icon.png" alt="Fire"> 
+        <img src="static/images/attack2-icon.png" alt="Fire">
+      </div>
+      <div class="attack-info">
+        <h3>About Me</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="pokemon-bottom-divider"></div>
+
+  <div class="pokemon-bottom-stats">
+    <div class="bottom-stat">
+      <img src="static/images/type-icon.png" alt="Weakness: Water">
+    </div>
+    <div class="bottom-stat">
+      <img src="static/images/type-icon.png" alt="Resistance: Ground">
+    </div>
+    <div class="bottom-stat">
+      <div style="display: flex; gap: 6px;">
+        <img src="static/images/type-icon.png" alt="">
+        <img src="static/images/type-icon.png" alt="">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODALS -->
+<div id="aboutModal" class="hero-modal">
+  <div class="hero-modal-content">
+    <div class="hero-modal-header">
+      <h2 class="hero-modal-title" id="modalTitle"></h2>
+      <button class="hero-modal-close" id="closeaboutModal">×</button>
+    </div>
+    <div class="hero-modal-body" id="modalBody"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // MODAL DATA
+  const modalData = {
+    AboutSite: {
+      title: "ABOUT THIS SITE",
+      content: `
+            <p>This site is both my portfolio <em>and</em> part of my portfolio. Using <strong>Python, Flask, 
+              JavaScript, HTML, and CSS</strong>, I built it to showcase my work across coding, 
+              art, and design — blending the technical with the creative.
+            </p>
+            <h3>Features:</h3>
+            <ul>
+                        <li><strong>Coding Projects:</strong>
+                        Projects inspired by real-life scenarios, practical tools, ineractive dashboards, games, neat things to look at, and anything else my brain cooks up!</li>
+
+                        <li><strong>Resume & Experience:</strong>
+                        Deep dive into my background and skills</li>
+
+                        <li><strong>Contact Forms:</strong>
+                        Send me a message, submit a support ticket for problem pages, and review CATastrophe2 (coming soon!)!</li>
+
+
+                    <p><strong>It's a living example of how I combine design, data, and automation to create thoughtful, functional experiences.</strong></p> 
+            
+      `
+    },
+    
+    AboutMe: {
+        title: "HELLO WORLD",
+        content: `
+              <p style="text-align: center; font-size: 2.0rem"> 🍑
+                </p>            
+        <h3>   
+                    I'm MK — a coder, artist, and perpetual creator based in Atlanta, GA </h3>
+              <ul>
+                <li>I <strong>thrive</strong> on building things — whether it's a web app, a piece of jewelry, or automation that makes life a little easier. I'm passionate about <strong>coding, process improvement, spreadsheets</strong> (yes, really!), and exploring how <strong>AI</strong> can integrate with the human experience.</li>  
+                <li>I'm always learning new skills and diving into new challenges, whether that's mastering a framework, experimenting with a fresh creative idea, or going down an internet rabbit-hole about random topics that pique my interest. </li>
+                <li> When I need to give my brain a break, I can often be found doing yoga or hula hooping up and down Atlanta's Betline!</li>
+                  </ul>
+      `
+    }
+  };
+
+  // MODAL FUNCTIONALITY
+  const modal = document.getElementById('aboutModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
+  const closeBtn = document.getElementById('closeaboutModal');
+
+  document.querySelectorAll('[data-modal]').forEach(card => {
+    card.addEventListener('click', () => {
+      const key = card.dataset.modal;
+      const data = modalData[key];
+      
+      if (data) {
+        modalTitle.textContent = data.title;
+        modalBody.innerHTML = data.content;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  });
+
+  closeBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
+</script>
+{% endblock %}
