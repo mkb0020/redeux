@@ -1,0 +1,611 @@
+{% extends "base.html" %}
+
+{% block title %}Resume - mkb0020{% endblock %}
+{% block description %}Professional background and experience{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .resume-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0rem 1rem;
+  }
+
+  .hero-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .hero-section h1 {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-size: 4rem;
+    background: linear-gradient(45deg, var(--ParticlePink), var(--NuclearFuscia), var(--AlphaAqua));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px var(--ParticleGlow3);
+    margin-bottom: 1.5rem;
+    animation: neonPulse 2s ease-in-out infinite alternate;
+  }
+
+  .download-btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: linear-gradient(45deg, var(--VortexViolet), var(--NuclearFuscia));
+    color: var(--White);
+    border: 2px solid var(--ParticlePink);
+    border-radius: 12px;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px var(--VortexGlow2);
+  }
+
+  .download-btn:hover {
+    background: linear-gradient(45deg, var(--NuclearFuscia), var(--AlphaAqua));
+    transform: translateY(-3px);
+    box-shadow: 0 0 40px var(--NuclearGlow3);
+  }
+
+  .summary-card {
+    background: rgba(23, 0, 50, 0.6);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--VortexViolet);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 8px 32px var(--VortexGlow2), inset 0 1px 0 var(--PlasmaGlow2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .summary-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent, var(--NuclearGlow1), transparent 30%);
+    opacity: 0.1;
+    animation: rotate 8s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes rotate {
+    100% { transform: rotate(360deg); }
+  }
+
+  .summary-card h2 {
+    color: var(--AlphaAqua);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 15px var(--AlphaGlow2);
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .summary-card p {
+    color: var(--White);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    font-family: Arial, sans-serif;
+    position: relative;
+    z-index: 1;
+  }
+
+  .summary-card strong {
+    color: var(--ParticlePink);
+  }
+
+  .section-title {
+    color: var(--AlphaAqua);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 2rem;
+    margin: 3rem 0 2rem 0;
+    text-shadow: 0 0 15px var(--AlphaGlow2);
+    text-align: center;
+  }
+
+  .resume-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .resume-card {
+    background: rgba(23, 0, 50, 0.6);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--ProtonPurple);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 16px var(--VortexGlow1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .resume-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent, var(--NuclearGlow1), transparent 30%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .resume-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 32px var(--PlasmaGlow2), 0 0 40px var(--NuclearGlow2);
+    border-color: var(--VortexViolet);
+  }
+
+  .resume-card:hover::before {
+    opacity: 0.15;
+    animation: rotate 4s linear infinite;
+  }
+
+  .resume-card h3 {
+    color: var(--NuclearFuscia);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .resume-card p {
+    color: var(--MutedGray);
+    font-size: 0.9rem;
+    font-family: Arial, sans-serif;
+    margin-top: 0.5rem;
+  }
+
+/* MODAL */
+  .resume-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.562);
+        backdrop-filter: blur(10px);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        overflow-y: auto; 
+  }
+
+  .resume-modal.active {
+    display: flex;
+  }
+
+  .resume-modal-content {
+    background: linear-gradient(135deg, var(--BosonBlue), var(--Black));
+    border: 3px solid var(--VortexViolet);
+    box-shadow: 0 0 50px var(--VortexGlow3);
+    border-radius: 20px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 75vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.4s ease;
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .resume-modal-header {
+    top: 0;
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--VortexViolet);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .resume-modal-title {
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.8rem;
+    color: var(--AlphaAqua);
+    margin: 0;
+    text-shadow: 0 0 15px var(--AlphaGlow2);
+  }
+
+  .resume-modal-close {
+    background: var(--RadiationRed);
+    color: var(--ParticlePink);
+    border: 2px solid var(--ParticlePink);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .resume-modal-close:hover {
+    background: var(--ParticlePink);
+    color: var(--BosonBlue);
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 0 20px var(--ParticleGlow3);
+  }
+
+  .resume-modal-body {
+    padding: 2rem;
+    color: var(--White);
+    font-family: Arial, sans-serif;
+    line-height: 1.8;
+  }
+
+  .resume-modal-body h3 {
+    color: var(--NuclearFuscia);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.5rem;
+    margin: 1.5rem 0 1rem 0;
+    text-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .resume-modal-body ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .resume-modal-body li {
+    margin: 0.75rem 0;
+  }
+
+  .resume-modal-body strong {
+    color: var(--ParticlePink);
+  }
+
+.auburn-card {
+        background: linear-gradient(135deg, 
+            rgba(11, 35, 65, 0.532), 
+            rgba(12, 35, 64, 0.361));
+        border: 3px solid rgba(232, 119, 34, 1);
+        border-radius: 18px;
+        padding: 15px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        box-shadow: 
+            0 10px 30px rgb(232, 120, 34),
+            0 0 20px rgba(232, 119, 34, 0.5);
+        text-align: center;
+        justify-content: center;
+
+    }
+
+  .auburn-card h4 {
+        color: rgb(232, 120, 34);
+        font-size: 2rem;
+        font-weight: 700;
+        padding-bottom: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'SpaceLetters';
+
+    }
+
+  .auburn-card h3 {
+        color: #FFFFFF;
+        font-size: 1.3rem;
+        font-weight: 700;
+        padding-bottom: 5px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+
+    }
+
+  .auburn-card p {
+        color: #FFFFFF;
+        font-size: 1.1rem;
+        font-weight: 700;
+        padding-bottom: 5px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+
+    }
+
+      .aubie-img {
+    width: 100px !important;
+    height: auto !important;
+    justify-content: center;
+  }
+
+@media (max-width: 768px) {
+    .hero-section h1 {
+      font-size: 2.5rem;
+    }
+
+    .resume-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .summary-card,
+    .resume-card {
+      padding: 1.5rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block modal_content %}
+<h3 >Professional Background</h3>
+<p>This page showcases my professional experience, skills, and education. Click on any card to learn more about specific areas of expertise.</p>
+
+<h3>Download Options:</h3>
+<ul>
+  <li><strong>PDF Resume:</strong> Full downloadable version</li>
+</ul>
+
+<p class="mission-text">"An expert is a person who has made all the mistakes that can be made in a very narrow field" - Niels Bohr</p>
+{% endblock %}
+
+{% block content %}
+<div class="resume-container">
+  <div class="hero-section">
+    <h1>RESUME</h1>
+    <a href="{{ url_for('static', filename='resume/ResumeDownload.pdf') }}" download="MK_Barriault_Resume.pdf" class="download-btn">
+      Download PDF
+    </a>
+  </div>
+
+  <div class="summary-card">
+    <h2>Summary</h2>
+        <p>
+            I'm super passionate about <strong>process improvement, problem solving, coding, and creating</strong> 
+            elegant, usable solutions that make complex operations run effortlessly. I love transforming real-world 
+            challenges into smart, scalable tools — blending technical creativity with operational precision.
+            <br><br>
+            With deep hands-on experience managing <strong>Cisco XaaS and SMARTnet lifecycles</strong> across both 
+            distributor and reseller environments, I bridge the gap between complex subscription programs and 
+            day-to-day execution. I've led <strong>onboarding, renewals, true-ups, deal registration, and partner 
+            enablement</strong> at scale—coordinating OEMs, distributors, vendors, partners, and end customers to 
+            keep everything aligned and efficient.
+            <br><br>
+            <strong>Self-taught in coding,</strong> I've translated my operational background into 
+            <strong>automation and analytics</strong> — building Python and Excel solutions that make quoting, 
+            reporting, and fulfillment faster, more accurate, and easier to scale.
+            <br><br>
+        </p>
+  <h2 class="section-title">Click each tile below to learn more:</h2>
+
+  <div class="resume-grid">
+    <div class="resume-card" data-modal="highlights">
+      <h3>Highlights</h3>
+    </div>
+    
+    <div class="resume-card" data-modal="education">
+      <h3>Education</h3>
+    </div>
+
+    <div class="resume-card" data-modal="certificates">
+      <h3>Certificates</h3>
+    </div>
+</div>
+    
+  <h2 class="section-title">Work Experience</h2>
+
+  <div class="resume-grid">
+    <div class="resume-card" data-modal="cisco">
+      <h3>SMARTnet & Subscriptions Senior Specialist</h3>
+      <p>D&H Distributing • Aug 2022 – Jun 2025</p>
+    </div>
+
+    <div class="resume-card" data-modal="scw">
+      <h3>Corporate / Healthcare Account Manager</h3>
+      <p>Southern Computer Warehouse • Mar 2016 – Aug 2022</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- RESUME MODALS-->>
+ <div id="resumeModal" class="resume-modal">
+  <div class="resume-modal-content">
+    <div class="resume-modal-header">
+      <h2 class="resume-modal-title" id="modalTitle"></h2>
+      <button class="resume-modal-close" id="closeResumeModal">X</button>
+    </div>
+    <div class="resume-modal-body" id="modalBody"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script> // MODAL DATA
+  const modalData = {
+    highlights: {
+      title: 'Highlights',
+      content: `
+      <h3>Key Achievements</h3>
+      <ul>
+        <li><strong>Automation Impact:</strong> Designed internal tools that cut manual quoting effort</li>
+        <li><strong>Enterprise Subscription Leadership:</strong> Owned end-to-end Cisco XaaS and SMARTnet lifecycles across complex accounts</li>
+        <li><strong>Workflow Orchestration:</strong> Coordinated multi-party processes spanning OEMs, distributors, partners, and customers</li>
+        <li><strong>Career Evolution:</strong> Leveraged operational expertise to self-teach software development and build production-ready tools</li>
+      </ul>
+
+      <h3>Core Strengths</h3>
+      <ul>
+        <li>Process design, optimization, and scalability</li>
+        <li>Translating business problems into technical solutions</li>
+        <li>Subscription lifecycle strategy and execution</li>
+        <li>Enablement through documentation, tooling, and training</li>
+      </ul>
+
+      <h3>Programming & Development</h3>
+      <ul>
+        <li><strong>Languages:</strong> Python, JavaScript, HTML/CSS, SQL</li>
+        <li><strong>Frontend:</strong> React, Three.js, Canvas API, SVG animation</li>
+        <li><strong>Backend:</strong> Flask, PostgreSQL, API integrations</li>
+        <li><strong>Tooling:</strong> Git, VS Code, Jupyter, Excel VBA</li>
+      </ul>
+
+      <h3>Operations & Analytics</h3>
+      <ul>
+        <li><strong>Subscription Platforms:</strong> Cisco XaaS, SMARTnet, renewals, true-ups</li>
+        <li><strong>Automation:</strong> Python scripts, Excel macros, internal workflow tooling</li>
+        <li><strong>Systems:</strong> Salesforce, Cisco CCW, partner portals</li>
+      </ul>
+
+      <h3>Collaboration & Communication</h3>
+      <ul>
+        <li>Clear technical and non-technical communication</li>
+        <li>Cross-functional alignment and stakeholder management</li>
+        <li>Process documentation and knowledge transfer</li>
+        <li>Ownership-driven, proactive problem solving</li>
+      </ul>
+      `
+    },
+    education: {
+      title: ' Education',
+      content: `
+              <div class="auburn-card">
+              <p style="text-align: center;">
+                <img src="static/images/Aubie.gif" alt="War Eagle!" class="aubie-img" id="aubie">
+      
+              <h4>Auburn University</h4>
+              <h3>Bachelor of Science: Industrial and Systems Engineering</h3>
+              2011 – 2015
+              </p>
+            </div>
+      `
+    },
+    certificates: {
+      title: 'Certificates',
+      content: `
+        <h3>Professional Certifications</h3>
+        <ul>
+          <li><strong>Cisco CX Stage 1:</strong> Distributors Badge</li>
+          <li><strong>Cisco Black Belt:</strong> Cloud Operations Stage 1</li>
+          <li><strong>Cisco Black Belt:</strong> Distribution Success Stage 1</li>
+          <li><strong>D&H LEAN Change Agent - Green Belt:</strong> Process optimization and workflow design</li>
+
+          </ul>
+        
+      `
+    },
+    cisco: {
+      title: 'SMARTnet & Subscriptions Senior Specialist',
+      content: `
+        <h3>D&H Distributing • Aug 2022 – Jun 2025</h3>
+        
+        <p><strong>Role Overview:</strong> Led Cisco subscription and support lifecycle management across enterprise distribution channels, coordinating between OEMs, partners, and end customers.</p>
+        
+        <h3>Key Responsibilities</h3>
+        <ul>
+          <li>Managed Cisco XaaS (Everything-as-a-Service) subscriptions including onboarding, renewals, and true-ups</li>
+          <li>Coordinated SMARTnet support contract lifecycle from quote to renewal</li>
+          <li>Built custom tools for quoting automation and reporting</li>
+          <li>Trained and enabled partner teams on subscription processes</li>
+          <li>Resolved complex billing and entitlement issues across multiple systems</li>
+        </ul>
+        
+        <h3>Key Achievements</h3>
+        <ul>
+          <li>Reduced manual quoting time </li>
+          <li>Created comprehensive training materials for partner enablement</li>
+          <li>Streamlined renewal and subscription modification process</li>
+        </ul>
+      `
+    },
+    scw: {
+      title: 'Corporate / Healthcare Account Manager',
+      content: `
+        <h3>Southern Computer Warehouse • Mar 2016 – Aug 2022</h3>
+        
+        <p><strong>Role Overview:</strong> Managed strategic accounts in corporate and healthcare sectors, focusing on IT procurement, relationship building, and solution delivery.</p>
+        
+        <h3>Key Responsibilities</h3>
+        <ul>
+          <li>Managed portfolio of enterprise and healthcare accounts</li>
+          <li>Coordinated complex IT procurement projects</li>
+          <li>Built relationships with C-level stakeholders</li>
+          <li>Developed custom solutions for client-specific needs</li>
+          <li>Negotiated contracts and managed vendor relationships</li>
+          <li>Provided post-sale support and account management</li>
+        </ul>
+        
+        <h3>Key Achievements</h3>
+        <ul>
+          <li>Grew account portfolio by 150% in 3 years</li>
+          <li>Maintained 95%+ customer satisfaction rating</li>
+          <li>Led successful implementations for multi-site healthcare organizations</li>
+          <li>Built Excel tools for quote management and tracking</li>
+        </ul>
+      `
+    }
+  };
+
+  // MODAL FUNCTIONALITY 
+  const modal = document.getElementById('resumeModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
+  const closeBtn = document.getElementById('closeResumeModal');
+
+  document.querySelectorAll('[data-modal]').forEach(card => {
+    card.addEventListener('click', () => {
+      const key = card.dataset.modal;
+      const data = modalData[key];
+      
+      if (data) {
+        modalTitle.textContent = data.title;
+        modalBody.innerHTML = data.content;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  });
+
+  closeBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
+</script>
+{% endblock %}
