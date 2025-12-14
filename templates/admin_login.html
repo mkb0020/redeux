@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - mkb0020{% endblock %}
+{% block description %}Secure admin access{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .login-container {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .login-card {
+    background: rgba(23, 0, 50, 0.8);
+    backdrop-filter: blur(20px);
+    border: 3px solid var(--VortexViolet);
+    border-radius: 20px;
+    padding: 3rem;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 8px 32px var(--VortexGlow2), inset 0 1px 0 var(--PlasmaGlow2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent, var(--NuclearGlow1), transparent 30%);
+    opacity: 0.15;
+    animation: rotate 8s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes rotate {
+    100% { transform: rotate(360deg); }
+  }
+
+  .login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .login-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: pulseGlow 2s infinite;
+  }
+
+  .login-title {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-size: 2rem;
+    background: linear-gradient(45deg, var(--ParticlePink), var(--NuclearFuscia), var(--AlphaAqua));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px var(--ParticleGlow3);
+    animation: neonPulse 2s ease-in-out infinite alternate;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .form-group label {
+    display: block;
+    color: var(--AlphaAqua);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px var(--AlphaGlow1);
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--ProtonPurple);
+    border-radius: 8px;
+    color: var(--White);
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+    transition: all 0.3s ease;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--VortexViolet);
+    box-shadow: 0 0 25px var(--VortexGlow2);
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .login-btn {
+    width: 100%;
+    padding: 1.2rem;
+    background: linear-gradient(45deg, var(--VortexViolet), var(--NuclearFuscia));
+    color: var(--White);
+    border: 2px solid var(--ParticlePink);
+    border-radius: 12px;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px var(--VortexGlow2);
+    position: relative;
+    z-index: 1;
+    text-transform: uppercase;
+  }
+
+  .login-btn:hover {
+    background: linear-gradient(45deg, var(--NuclearFuscia), var(--AlphaAqua));
+    transform: translateY(-2px);
+    box-shadow: 0 0 40px var(--NuclearGlow3);
+    animation: pulseGlow 1s infinite;
+  }
+
+  .login-btn:active {
+    transform: translateY(0);
+  }
+
+  .error-alert {
+    background: rgba(115, 1, 50, 0.4);
+    border: 2px solid var(--RadiationRed);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    color: var(--White);
+    font-family: Arial, sans-serif;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(115, 1, 50, 0.5);
+    position: relative;
+    z-index: 1;
+  }
+
+  .back-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .back-link a {
+    color: var(--AlphaAqua);
+    text-decoration: none;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .back-link a:hover {
+    color: var(--NuclearFuscia);
+    text-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  @media (max-width: 768px) {
+    .login-card {
+      padding: 2rem;
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+    }
+
+    .form-group input {
+      font-size: 16px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-icon">🔐</div>
+      <h1 class="login-title">Admin Access</h1>
+    </div>
+
+    {% if error %}
+    <div class="error-alert">
+      ⚠️ {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          placeholder="Enter admin password"
+          required 
+          autofocus
+        >
+      </div>
+
+      <button type="submit" class="login-btn">
+        🚀 Access Admin
+      </button>
+    </form>
+
+    <div class="back-link">
+      <a href="{{ url_for('home') }}">← Back to Home</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Add enter key support
+  document.getElementById('password').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.target.closest('form').submit();
+    }
+  });
+
+  // Form submission state
+  const form = document.querySelector('form');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      const submitBtn = form.querySelector('.login-btn');
+      submitBtn.textContent = '🔓 Authenticating...';
+      submitBtn.disabled = true;
+    });
+  }
+</script>
+{% endblock %}

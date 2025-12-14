@@ -1,0 +1,570 @@
+{% extends "base.html" %}
+
+{% block title %}Messages & Suggestions - Admin{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .admin-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .admin-title {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-size: 2.5rem;
+    background: linear-gradient(45deg, var(--NuclearFuscia), var(--AquaAura), var(--NuclearFuscia));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px var(--ParticleGlow3);
+  }
+
+  .admin-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-admin {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(45deg, var(--VortexViolet), var(--NuclearFuscia));
+    color: var(--White);
+    border: 2px solid var(--ParticlePink);
+    border-radius: 10px;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--VortexGlow2);
+    display: inline-block;
+  }
+
+  .btn-admin:hover {
+    background: linear-gradient(45deg, var(--NuclearFuscia), var(--AlphaAqua));
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--NuclearGlow3);
+    color: var(--White);
+  }
+
+  .section-title {
+    font-family: 'GothNerd', sans-serif;
+    font-size: 2rem;
+    color: var(--AlphaAqua);
+    margin: 3rem 0 1.5rem 0;
+    text-shadow: 0 0 15px var(--AlphaGlow2);
+  }
+
+  .data-card {
+    background: rgba(23, 0, 50, 0.6);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--VortexViolet);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 8px 32px var(--VortexGlow2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .data-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent, var(--NuclearGlow1), transparent 30%);
+    opacity: 0.1;
+    animation: rotate 8s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes rotate {
+    100% { transform: rotate(360deg); }
+  }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .admin-table thead tr {
+    background: rgba(55, 2, 90, 0.5);
+  }
+
+  .admin-table th {
+    padding: 1rem;
+    text-align: left;
+    color: var(--AlphaAqua);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 0.9rem;
+    border-bottom: 2px solid var(--VortexViolet);
+    text-transform: uppercase;
+  }
+
+  .admin-table td {
+    padding: 1rem;
+    color: var(--White);
+    font-family: Arial, sans-serif;
+    border-bottom: 1px solid rgba(131, 12, 222, 0.2);
+  }
+
+  .admin-table tbody tr {
+    transition: all 0.3s ease;
+  }
+
+  .admin-table tbody tr:hover {
+    background: rgba(131, 12, 222, 0.2);
+  }
+
+  .badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    font-family: 'GothNerd', sans-serif;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+
+  .badge-unread {
+    background: var(--NuclearFuscia);
+    color: var(--White);
+    box-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .badge-read {
+    background: var(--ProtonPurple);
+    color: var(--MutedGray);
+  }
+
+  .btn-action {
+    padding: 0.5rem 1rem;
+    background: rgba(131, 12, 222, 0.3);
+    border: 1px solid var(--VortexViolet);
+    border-radius: 6px;
+    color: var(--White);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-action:hover {
+    background: var(--VortexViolet);
+    box-shadow: 0 0 15px var(--VortexGlow2);
+  }
+
+  .btn-view {
+    background: rgba(103, 254, 189, 0.2);
+    border-color: var(--AlphaAqua);
+  }
+
+  .btn-view:hover {
+    background: var(--AlphaAqua);
+    color: var(--Black);
+  }
+
+  .email-link {
+    color: var(--AlphaAqua);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .email-link:hover {
+    color: var(--NuclearFuscia);
+    text-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-toggle {
+    padding: 0.5rem 1rem;
+    background: rgba(131, 12, 222, 0.3);
+    border: 1px solid var(--VortexViolet);
+    border-radius: 6px;
+    color: var(--White);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .dropdown-toggle:hover {
+    background: var(--VortexViolet);
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid var(--VortexViolet);
+    border-radius: 8px;
+    min-width: 200px;
+    box-shadow: 0 8px 32px var(--VortexGlow3);
+    z-index: 1000;
+    margin-top: 0.5rem;
+  }
+
+  .dropdown:hover .dropdown-menu,
+  .dropdown-menu:hover {
+    display: block;
+  }
+
+  .dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    color: var(--White);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 0.9rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .dropdown-item:hover {
+    background: rgba(131, 12, 222, 0.4);
+    color: var(--AlphaAqua);
+  }
+
+  .dropdown-divider {
+    height: 1px;
+    background: rgba(131, 12, 222, 0.5);
+    margin: 0.5rem 0;
+    border: none;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal.active {
+    display: flex;
+  }
+
+  .modal-content {
+    background: linear-gradient(135deg, var(--BosonBlue), var(--Black));
+    border: 3px solid var(--VortexViolet);
+    box-shadow: 0 0 50px var(--VortexGlow3);
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, var(--ProtonPurple), var(--BosonBlue));
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--VortexViolet);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-title {
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.5rem;
+    color: var(--AlphaAqua);
+    margin: 0;
+  }
+
+  .modal-close {
+    background: var(--RadiationRed);
+    color: var(--ParticlePink);
+    border: 2px solid var(--ParticlePink);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .modal-close:hover {
+    background: var(--ParticlePink);
+    color: var(--BosonBlue);
+    transform: rotate(90deg);
+  }
+
+  .modal-body {
+    padding: 2rem;
+    color: var(--White);
+    font-family: Arial, sans-serif;
+    line-height: 1.8;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--MutedGray);
+    font-family: Arial, sans-serif;
+  }
+
+  @media (max-width: 768px) {
+    .admin-table {
+      font-size: 0.85rem;
+    }
+
+    .admin-table th,
+    .admin-table td {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+  <div class="admin-header">
+    <h1 class="admin-title">MESSAGES & SUGGESTIONS</h1>
+    <div class="admin-actions">
+      <a href="{{ url_for('admin_wishlist') }}" class="btn-admin">WISHLIST</a>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn-admin">← DASHBOARD</a>
+    </div>
+  </div>
+
+  <!-- SUGGESTIONS SECTION -->
+  <h2 class="section-title">Suggestions ({{ unread_suggestions }} Unread)</h2>
+  <div class="data-card">
+    {% if suggestions %}
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for suggestion in suggestions %}
+          {% if not suggestion.archived and not suggestion.added_to_wishlist %}
+          <tr>
+            <td>{{ suggestion.timestamp.strftime('%m-%d-%Y') }}</td>
+            <td><strong>{{ suggestion.name }}</strong></td>
+            <td>
+              {% if suggestion.email %}
+              <a href="mailto:{{ suggestion.email }}" class="email-link">{{ suggestion.email }}</a>
+              {% else %}
+              <span style="color: rgba(255, 255, 255, 0.5);">No email</span>
+              {% endif %}
+            </td>
+            <td>
+              <span class="badge" style="background: var(--PlasmaPurple);">{{ suggestion.suggestion_type }}</span>
+            </td>
+            <td>
+              <span class="badge badge-{{ suggestion.status if suggestion.status else 'unread' }}">
+                {{ suggestion.status if suggestion.status else 'unread' }}
+              </span>
+            </td>
+            <td>
+              <div class="dropdown">
+                <button class="dropdown-toggle">Actions ▼</button>
+                <div class="dropdown-menu">
+                  <button class="dropdown-item" onclick="openSuggestionModal('{{ suggestion.name|replace("'", "\\'") }}', '{{ suggestion.suggestion|replace("'", "\\'")|replace("\n", "\\n") }}', '{{ suggestion.suggestion_type }}', '{{ suggestion.timestamp.strftime('%m-%d-%Y') }}')">
+                    👁️ 
+                  </button>
+                  <hr class="dropdown-divider">
+                  <form method="POST" action="{{ url_for('add_suggestion_to_wishlist_route', suggestion_id=suggestion.id) }}" style="margin: 0;">
+                    <button type="submit" class="dropdown-item">Add to Wishlist</button>
+                  </form>
+                  <hr class="dropdown-divider">
+                  {% if suggestion.status != 'read' %}
+                  <form method="POST" action="{{ url_for('update_suggestion_status', suggestion_id=suggestion.id) }}" style="margin: 0;">
+                    <input type="hidden" name="status" value="read">
+                    <button type="submit" class="dropdown-item">Mark Read</button>
+                  </form>
+                  {% else %}
+                  <form method="POST" action="{{ url_for('update_suggestion_status', suggestion_id=suggestion.id) }}" style="margin: 0;">
+                    <input type="hidden" name="status" value="unread">
+                    <button type="submit" class="dropdown-item">Mark Unread</button>
+                  </form>
+                  {% endif %}
+                  <hr class="dropdown-divider">
+                  <form method="POST" action="{{ url_for('archive_suggestion', suggestion_id=suggestion.id) }}" style="margin: 0;" onsubmit="return confirm('Archive this suggestion?');">
+                    <button type="submit" class="dropdown-item" style="color: var(--NuclearFuscia);">📦 Archive</button>
+                  </form>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <p>No suggestions yet.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- CONTACT MESSAGES SECTION -->
+  <h2 class="section-title">Contact Messages ({{ unread_contacts }} Unread)</h2>
+  <div class="data-card">
+    {% if contacts %}
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Inquiry</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for contact in contacts %}
+          <tr>
+            <td>{{ contact.timestamp.strftime('%m-%d-%Y') }}</td>
+            <td><strong>{{ contact.name }}</strong></td>
+            <td>
+              <a href="mailto:{{ contact.email }}" class="email-link">{{ contact.email }}</a>
+            </td>
+            <td>{{ contact.inquiry_type if contact.inquiry_type else 'General' }}</td>
+            <td>
+              <span class="badge badge-{{ contact.status }}">{{ contact.status }}</span>
+            </td>
+            <td>
+              <button class="btn-action btn-view" onclick="openContactModal({{ loop.index0 }})">
+                👁️ 
+              </button>
+              {% if contact.status == 'unread' %}
+              <form method="POST" action="{{ url_for('update_contact_submission_status', submission_id=contact.id, status='read') }}" style="display: inline; margin-left: 0.5rem;">
+                <button type="submit" class="btn-action"> Read</button>
+              </form>
+              {% else %}
+              <form method="POST" action="{{ url_for('update_contact_submission_status', submission_id=contact.id, status='unread') }}" style="display: inline; margin-left: 0.5rem;">
+                <button type="submit" class="btn-action"> Unread</button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <p>No contact messages yet.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div id="suggestionModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalSuggestionName"></h2>
+      <button class="modal-close" onclick="closeSuggestionModal()">X</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Type:</strong> <span id="modalSuggestionType"></span></p>
+      <p><strong>Date:</strong> <span id="modalSuggestionDate"></span></p>
+      <hr style="border-color: var(--VortexViolet); margin: 1.5rem 0;">
+      <h3 style="color: var(--AlphaAqua);">Suggestion:</h3>
+      <p id="modalSuggestionText" style="white-space: pre-wrap;"></p>
+    </div>
+  </div>
+</div>
+
+<div id="contactModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">💬 Contact Message</h2>
+      <button class="modal-close" onclick="closeContactModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="contactMessage" style="white-space: pre-wrap;"></p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const contacts = {{ contacts | tojson }};
+
+function openSuggestionModal(name, suggestion, type, date) {
+  document.getElementById('modalSuggestionName').textContent = name;
+  document.getElementById('modalSuggestionType').textContent = type;
+  document.getElementById('modalSuggestionDate').textContent = date;
+  document.getElementById('modalSuggestionText').textContent = suggestion;
+  document.getElementById('suggestionModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSuggestionModal() {
+  document.getElementById('suggestionModal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+function openContactModal(index) {
+  const contact = contacts[index];
+  document.getElementById('contactMessage').textContent = contact.message;
+  document.getElementById('contactModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeContactModal() {
+  document.getElementById('contactModal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+document.getElementById('suggestionModal').addEventListener('click', (e) => {
+  if (e.target.id === 'suggestionModal') closeSuggestionModal();
+});
+
+document.getElementById('contactModal').addEventListener('click', (e) => {
+  if (e.target.id === 'contactModal') closeContactModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeSuggestionModal();
+    closeContactModal();
+  }
+});
+</script>
+{% endblock %}

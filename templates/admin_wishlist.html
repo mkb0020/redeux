@@ -1,0 +1,485 @@
+{% extends "base.html" %}
+
+{% block title %}Wishlist - Admin{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .admin-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .admin-title {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-size: 2.5rem;
+    background: linear-gradient(45deg, var(--ParticlePink), var(--NuclearFuscia), var(--AlphaAqua));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px var(--ParticleGlow3);
+  }
+
+  .btn-admin {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(45deg, var(--VortexViolet), var(--NuclearFuscia));
+    color: var(--White);
+    border: 2px solid var(--ParticlePink);
+    border-radius: 10px;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--VortexGlow2);
+    display: inline-block;
+  }
+
+  .btn-admin:hover {
+    background: linear-gradient(45deg, var(--NuclearFuscia), var(--AlphaAqua));
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--NuclearGlow3);
+    color: var(--White);
+  }
+
+  /* Add Form */
+  .add-form-card {
+    background: rgba(23, 0, 50, 0.6);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--AlphaAqua);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px var(--AlphaGlow3);
+  }
+
+  .form-title {
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.5rem;
+    color: var(--AlphaAqua);
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 10px var(--AlphaGlow2);
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--ProtonPurple);
+    border-radius: 8px;
+    color: var(--White);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: Arial, sans-serif;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: var(--VortexViolet);
+    box-shadow: 0 0 20px var(--VortexGlow2);
+  }
+
+  .form-label {
+    display: block;
+    color: var(--AlphaAqua);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .btn-add {
+    padding: 0.875rem 2rem;
+    background: var(--AlphaAqua);
+    color: var(--Black);
+    border: none;
+    border-radius: 8px;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-add:hover {
+    background: var(--AquaAura);
+    box-shadow: 0 0 20px var(--AlphaGlow3);
+    transform: translateY(-2px);
+  }
+
+  /* Filter */
+  .filter-card {
+    background: rgba(23, 0, 50, 0.6);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--VortexViolet);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px var(--VortexGlow2);
+  }
+
+  .filter-title {
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.3rem;
+    color: var(--ParticlePink);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px var(--ParticleGlow2);
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    background: rgba(131, 12, 222, 0.3);
+    border: 1px solid var(--VortexViolet);
+    border-radius: 6px;
+    color: var(--White);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .filter-btn:hover,
+  .filter-btn-active {
+    background: var(--VortexViolet);
+    box-shadow: 0 0 15px var(--VortexGlow2);
+    color: var(--White);
+  }
+
+  /* Wishlist Items */
+  .wishlist-card {
+    background: rgba(23, 0, 50, 0.6);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--VortexViolet);
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px var(--VortexGlow2);
+    overflow: hidden;
+  }
+
+  .wishlist-header {
+    background: rgba(55, 2, 90, 0.6);
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--VortexViolet);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .wishlist-body {
+    padding: 2rem;
+  }
+
+  .section-title {
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.2rem;
+    color: var(--ParticlePink);
+    margin-bottom: 0.75rem;
+    text-shadow: 0 0 10px var(--ParticleGlow2);
+  }
+
+  .info-text {
+    color: var(--White);
+    font-family: Arial, sans-serif;
+    margin: 0.5rem 0;
+  }
+
+  .details-box {
+    background: rgba(0, 0, 0, 0.3);
+    border-left: 4px solid var(--VortexViolet);
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
+
+  .notes-form {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+  }
+
+  .notes-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--ProtonPurple);
+    border-radius: 6px;
+    color: var(--White);
+    font-size: 0.9rem;
+    font-family: Arial, sans-serif;
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  .notes-form textarea:focus {
+    outline: none;
+    border-color: var(--VortexViolet);
+    box-shadow: 0 0 15px var(--VortexGlow2);
+  }
+
+  .wishlist-footer {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1.5rem;
+    border-top: 2px solid var(--VortexViolet);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .status-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-status {
+    padding: 0.5rem 1rem;
+    background: rgba(131, 12, 222, 0.3);
+    border: 1px solid var(--VortexViolet);
+    border-radius: 6px;
+    color: var(--White);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-status:hover {
+    background: var(--VortexViolet);
+    box-shadow: 0 0 15px var(--VortexGlow2);
+  }
+
+  .btn-danger {
+    background: rgba(115, 1, 50, 0.3);
+    border-color: var(--RadiationRed);
+    margin-left: 0.5rem;
+  }
+
+  .btn-danger:hover {
+    background: var(--RadiationRed);
+  }
+
+  .badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    font-family: 'GothNerd', sans-serif;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+
+  .badge-type {
+    background: var(--PlasmaPurple);
+    color: var(--White);
+  }
+
+  .badge-not_started {
+    background: var(--ProtonPurple);
+    color: var(--MutedGray);
+  }
+
+  .badge-in_progress {
+    background: var(--PlasmaPurple);
+    color: var(--White);
+  }
+
+  .badge-completed {
+    background: var(--RadioactiveGreen);
+    color: var(--Black);
+  }
+
+  .badge-revisiting {
+    background: var(--NuclearFuscia);
+    color: var(--White);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--MutedGray);
+    font-family: Arial, sans-serif;
+  }
+
+  @media (max-width: 768px) {
+    .wishlist-body {
+      padding: 1rem;
+    }
+
+    .status-buttons {
+      width: 100%;
+    }
+
+    .btn-status {
+      flex: 1;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+  <div class="admin-header">
+    <h1 class="admin-title">WISHLIST</h1>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn-admin">← DASHBOARD</a>
+  </div>
+
+  <!-- ADD NEW ITEM FORM -->
+  <div class="add-form-card">
+    <h3 class="form-title">➕ Add New Enhancement</h3>
+    <form method="POST" action="{{ url_for('add_wishlist_item_route') }}">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label class="form-label">Enhancement Type</label>
+          <select class="form-control" name="enhancement_type" required>
+            <option value="">Select Type...</option>
+            <option value="Design/Aesthetics">Design/Aesthetics</option>
+            <option value="New Feature">New Feature</option>
+            <option value="Technical Improvement">Technical Improvement</option>
+            <option value="Content">Content</option>
+            <option value="Game Feature">Game Feature</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Initial Note (Optional)</label>
+          <input type="text" class="form-control" name="notes" placeholder="Any thoughts or reminders...">
+        </div>
+      </div>
+      <div style="margin-bottom: 1rem;">
+        <label class="form-label">Details</label>
+        <textarea class="form-control" name="details" rows="3" placeholder="Describe the enhancement..." required></textarea>
+      </div>
+      <input type="hidden" name="source" value="Me">
+      <button type="submit" class="btn-add">Add to Wishlist</button>
+    </form>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-card">
+    <h3 class="filter-title">Filter by Status</h3>
+    <div class="filter-buttons">
+      <a href="{{ url_for('admin_wishlist') }}" 
+         class="filter-btn {% if not filter_status %}filter-btn-active{% endif %}">
+        All ({{ all_count }})
+      </a>
+      <a href="{{ url_for('admin_wishlist', filter_status='not_started') }}" 
+         class="filter-btn {% if filter_status == 'not_started' %}filter-btn-active{% endif %}">
+        Not Started ({{ not_started_count }})
+      </a>
+      <a href="{{ url_for('admin_wishlist', filter_status='in_progress') }}" 
+         class="filter-btn {% if filter_status == 'in_progress' %}filter-btn-active{% endif %}">
+        In Progress ({{ in_progress_count }})
+      </a>
+      <a href="{{ url_for('admin_wishlist', filter_status='completed') }}" 
+         class="filter-btn {% if filter_status == 'completed' %}filter-btn-active{% endif %}">
+        Completed ({{ completed_count }})
+      </a>
+      <a href="{{ url_for('admin_wishlist', filter_status='revisiting') }}" 
+         class="filter-btn {% if filter_status == 'revisiting' %}filter-btn-active{% endif %}">
+        Revisiting ({{ revisiting_count }})
+      </a>
+    </div>
+  </div>
+
+  <!-- WISHLIST ITEMS -->
+  {% if wishlist_items %}
+    {% for item in wishlist_items %}
+    <div class="wishlist-card">
+      <div class="wishlist-header">
+        <div>
+          <span class="badge badge-type">{{ item.enhancement_type }}</span>
+        </div>
+        <span class="badge badge-{{ item.status }}">{{ item.status|replace('_', ' ')|title }}</span>
+      </div>
+
+      <div class="wishlist-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div>
+            <h4 class="section-title">Details</h4>
+            <p class="info-text"><strong>Source:</strong> {{ item.source }}</p>
+            <p class="info-text"><strong>Added:</strong> {{ item.created_at.strftime('%m-%d-%Y') }}</p>
+            {% if item.updated_at and item.updated_at != item.created_at %}
+            <p class="info-text"><strong>Updated:</strong> {{ item.updated_at.strftime('%m-%d-%Y %I:%M %p') }}</p>
+            {% endif %}
+            
+            <div class="details-box">
+              <p class="info-text">{{ item.details }}</p>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="section-title">Notes</h4>
+            {% if item.notes %}
+            <div class="details-box">
+              <p class="info-text">{{ item.notes }}</p>
+            </div>
+            {% else %}
+            <p class="info-text" style="font-style: italic; color: rgba(255, 255, 255, 0.5);">
+              No notes yet
+            </p>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('update_wishlist_notes_route', wishlist_id=item.wishlist_id) }}" class="notes-form">
+              <textarea name="notes" placeholder="Add or update notes...">{{ item.notes if item.notes else '' }}</textarea>
+              <button type="submit" class="btn-add" style="margin-top: 0.5rem; width: 100%;">
+                {{ 'Update' if item.notes else 'Add' }} Note
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="wishlist-footer">
+        <div>
+          <p style="color: var(--AlphaAqua); font-family: 'GothNerd', sans-serif; margin-bottom: 0.5rem;">
+            Update Status:
+          </p>
+          <div class="status-buttons">
+            {% for status in ['not_started', 'in_progress', 'completed', 'revisiting'] %}
+            {% if item.status != status %}
+            <form method="POST" action="{{ url_for('update_wishlist_status_route', wishlist_id=item.wishlist_id, status=status) }}" style="display: inline;">
+              <button type="submit" class="btn-status">{{ status|replace('_', ' ')|title }}</button>
+            </form>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        <div>
+          <form method="POST" action="{{ url_for('archive_wishlist_item', wishlist_id=item.wishlist_id) }}" style="display: inline;" onsubmit="return confirm('Archive this item?');">
+            <button type="submit" class="btn-status">ARCHIVE</button>
+          </form>
+          <form method="POST" action="{{ url_for('delete_wishlist_item', wishlist_id=item.wishlist_id) }}" style="display: inline;" onsubmit="return confirm('Permanently delete? This cannot be undone!');">
+            <button type="submit" class="btn-status btn-danger">DELETE</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div class="empty-state">
+    <h2>Wishlist is empty!</h2>
+    <p>{% if filter_status %}No items with status "{{ filter_status|replace('_', ' ')|title }}".{% else %}Add your first enhancement idea above!{% endif %}</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

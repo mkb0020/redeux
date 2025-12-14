@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/KittyStyle.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <title>{% block title %}mkb0020{% endblock %}</title>
+  <meta name="description" content="{% block description %}Portfolio and Interactive Experiences{% endblock %}" />
+  
+  <style>
+    .flash-messages {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      z-index: 9999;
+      max-width: 400px;
+    }
+
+    .flash-message {
+      background: rgba(23, 0, 50, 0.95);
+      border: 2px solid var(--VortexViolet);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 30px var(--VortexGlow2);
+      animation: slideInRight 0.4s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .flash-message.success {
+      border-color: var(--AlphaAqua);
+      box-shadow: 0 0 30px var(--AlphaGlow2);
+    }
+
+    .flash-message.error {
+      border-color: var(--RadiationRed);
+      box-shadow: 0 0 30px rgba(115, 1, 50, 0.5);
+    }
+
+    .flash-message p {
+      color: var(--White);
+      margin: 0;
+      font-family: 'GothNerd', sans-serif;
+      font-size: 1.1rem;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .page-content {
+      margin-top: 30px;
+      padding: 2rem 1rem;
+      min-height: calc(100vh - 80px);
+      position: relative;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      .flash-messages {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+      }
+
+      .page-content {
+        padding: 1rem 0.5rem;
+      }
+    }
+
+    
+  </style>
+  {% block extra_styles %}{% endblock %}
+</head>
+<body>
+ 
+  <nav class="navbar">  <!-- NAVBAR -->
+    <div class="nav-container">
+      
+      <div class="left-dropdown">
+        <button class="menu-trigger" aria-label="Menu">
+          <img src="{{ url_for('static', filename='images/Niels2.png') }}" alt="Menu" class="home-icon">
+        </button>
+
+        <div class="left-menu">
+          <a href="{{ url_for('home') }}" class="menu-item">Home</a>
+          <a href="https://mkb0020.github.io/" class="menu-item">Javascript Projects</a>
+          <a href="{{ url_for('resume') }}" class="menu-item">Resume</a>
+          <a href="{{ url_for('contact') }}" class="menu-item">Contact</a>
+          <a href="{{ url_for('review') }}" class="menu-item">Review CATastrophe 2</a>
+          <a href="{{ url_for('support') }}" class="menu-item">Report an Issue</a>
+          <a href="{{ url_for('admin_login') }}" class="menu-item">Admin</a>
+          
+
+          <div class="social-links">
+            <a href="https://www.linkedin.com/in/mkb0020/" target="_blank" aria-label="LinkedIn">
+              <img src="{{ url_for('static', filename='images/linkedin-icon.png') }}" alt="LinkedIn" class="social-icon">
+            </a>
+            <a href="https://github.com/mkb0020" target="_blank" aria-label="GitHub">
+              <img src="{{ url_for('static', filename='images/github-icon.png') }}" alt="GitHub" class="social-icon">
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <a href="{{ url_for('home') }}">
+        <div class="logo">♡ mkb0020</div>
+      </a>
+ 
+      <div class="help-dropdown">
+        <button class="help-icon" id="helpBtn" aria-label="Help Menu">
+          <div class="question-mark">?</div>
+        </button>
+        
+        <div class="dropdown-menu" id="dropdownMenu">
+          <button id="openMainHelp">About</button>
+          {% block help_menu_items %}{% endblock %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  {% with messages = get_flashed_messages(with_categories=true) %} <!-- FLASH MESSAGES -->
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash-message {{ category }}">
+            <p>{{ message }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div id="helpModal" class="modal"> <!-- HELP MODAL -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title">{% block modal_title %}ABOUT{% endblock %}</h1>
+        <button class="modal-close" id="closeModal">X</button>
+      </div>
+      <div class="modal-body">
+        {% block modal_content %}
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+
+  {% block extra_modals %}{% endblock %}
+
+  <div class="page-content"> <!-- MAIN CONTENT -->
+    {% block content %}{% endblock %}
+  </div>
+
+  <div id="stars"></div> <!-- STAR BACKGROUND -->
+
+  <button class="floating-back-to-top" id="floatingBackToTop"> <!-- BACK TO TOP-->
+    ↑ 
+  </button>
+
+  <script src="{{ url_for('static', filename='js/KittyCore.js') }}"></script>
+  <script>
+    const starsDiv = document.getElementById('stars');
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.width = star.style.height = Math.random() * 2 + 'px';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 4 + 's';
+      starsDiv.appendChild(star);
+    }
+
+    setTimeout(() => { // AUTO-DISMISS FLASH MESSAGE
+      const flashMessages = document.querySelectorAll('.flash-message');
+      flashMessages.forEach(msg => {
+        msg.style.animation = 'slideInRight 0.4s ease reverse';
+        setTimeout(() => msg.remove(), 400);
+      });
+    }, 5000);
+
+    window.addEventListener('scroll', () => {// SHOW BACK TO TOP
+      const backToTop = document.getElementById('floatingBackToTop');
+      if (window.scrollY > 300) {
+        backToTop.classList.add('visible');
+      } else {
+        backToTop.classList.remove('visible');
+      }
+    });
+
+    document.getElementById('floatingBackToTop').addEventListener('click', () => { // SMOOTH SCROLL BACK TO TOP
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

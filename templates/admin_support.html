@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block title %}Support Tickets - Admin{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .admin-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .admin-title {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-size: 2.5rem;
+    background: linear-gradient(45deg, var(--ParticlePink), var(--NuclearFuscia), var(--AlphaAqua));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px var(--ParticleGlow3);
+  }
+
+  .btn-admin {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(45deg, var(--VortexViolet), var(--NuclearFuscia));
+    color: var(--White);
+    border: 2px solid var(--ParticlePink);
+    border-radius: 10px;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--VortexGlow2);
+    display: inline-block;
+  }
+
+  .btn-admin:hover {
+    background: linear-gradient(45deg, var(--NuclearFuscia), var(--AlphaAqua));
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--NuclearGlow3);
+    color: var(--White);
+  }
+
+  .data-card {
+    background: rgba(23, 0, 50, 0.6);
+    backdrop-filter: blur(15px);
+    border: 2px solid var(--VortexViolet);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px var(--VortexGlow2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .data-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent, var(--NuclearGlow1), transparent 30%);
+    opacity: 0.1;
+    animation: rotate 8s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes rotate {
+    100% { transform: rotate(360deg); }
+  }
+
+  .ticket-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--ProtonPurple);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+
+  .ticket-card:hover {
+    border-color: var(--VortexViolet);
+    box-shadow: 0 0 20px var(--VortexGlow2);
+  }
+
+  .ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .ticket-info h3 {
+    color: var(--AlphaAqua);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .ticket-meta {
+    color: var(--MutedGray);
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+  }
+
+  .badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    font-family: 'GothNerd', sans-serif;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+
+  .badge-new {
+    background: var(--NuclearFuscia);
+    color: var(--White);
+    box-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .badge-in-progress {
+    background: var(--PlasmaPurple);
+    color: var(--White);
+  }
+
+  .badge-resolved {
+    background: var(--RadioactiveGreen);
+    color: var(--Black);
+  }
+
+  .page-badge {
+    background: var(--ProtonPurple);
+    color: var(--White);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: 'GothNerd', sans-serif;
+  }
+
+  .ticket-issue {
+    background: rgba(0, 0, 0, 0.5);
+    border-left: 4px solid var(--VortexViolet);
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
+
+  .ticket-issue p {
+    color: var(--White);
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
+  .ticket-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .btn-action {
+    padding: 0.5rem 1rem;
+    background: rgba(131, 12, 222, 0.3);
+    border: 1px solid var(--VortexViolet);
+    border-radius: 6px;
+    color: var(--White);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-action:hover {
+    background: var(--VortexViolet);
+    box-shadow: 0 0 15px var(--VortexGlow2);
+  }
+
+  .email-link {
+    color: var(--AlphaAqua);
+    text-decoration: none;
+  }
+
+  .email-link:hover {
+    color: var(--NuclearFuscia);
+    text-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--MutedGray);
+    font-family: Arial, sans-serif;
+  }
+
+  @media (max-width: 768px) {
+    .ticket-header {
+      flex-direction: column;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+  <div class="admin-header">
+    <h1 class="admin-title">PROBLEMS</h1>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn-admin">← DASHBOARD</a>
+  </div>
+
+  <div class="data-card">
+    {% if tickets %}
+      <div style="margin-bottom: 2rem; padding: 1rem; background: rgba(103, 254, 189, 0.1); border-left: 4px solid var(--AlphaAqua); border-radius: 8px;">
+        <p style="color: var(--AlphaAqua); font-family: 'GothNerd', sans-serif; margin: 0;">
+          📊 Total: {{ tickets|length }} tickets | New: {{ new_count }}
+        </p>
+      </div>
+
+      {# Sort tickets: new/in_progress first, then resolved #}
+      {% set active_tickets = tickets|selectattr('status', 'in', ['new', 'in_progress', None])|list %}
+      {% set resolved_tickets = tickets|selectattr('status', 'equalto', 'resolved')|list %}
+      
+      {% for ticket in active_tickets + resolved_tickets %}
+      <div class="ticket-card">
+        <div class="ticket-header">
+          <div class="ticket-info">
+            <h3>{{ ticket.name }}</h3>
+            <p class="ticket-meta">
+              📅 {{ ticket.timestamp.strftime('%B %d, %Y at %I:%M %p') }}
+              {% if ticket.email %}
+              | 📧 <a href="mailto:{{ ticket.email }}" class="email-link">{{ ticket.email }}</a>
+              {% endif %}
+            </p>
+            <p style="margin-top: 0.5rem;">
+              <span class="page-badge">{{ ticket.page }}</span>
+            </p>
+          </div>
+          <span class="badge badge-{{ ticket.status.replace('_', '-') if ticket.status else 'new' }}">
+            {{ ticket.status.replace('_', ' ').title() if ticket.status else 'New' }}
+          </span>
+        </div>
+
+        <div class="ticket-issue">
+          <p>{{ ticket.issue }}</p>
+        </div>
+
+        <div class="ticket-actions">
+          {% if ticket.status != 'resolved' %}
+          <form method="POST" action="{{ url_for('update_support_status', ticket_id=ticket.id, status='resolved') }}" style="display: inline;">
+            <button type="submit" class="btn-action">✅ Mark Resolved</button>
+          </form>
+          {% endif %}
+          
+          {% if ticket.status != 'in_progress' %}
+          <form method="POST" action="{{ url_for('update_support_status', ticket_id=ticket.id, status='in_progress') }}" style="display: inline;">
+            <button type="submit" class="btn-action">🔧 Mark In Progress</button>
+          </form>
+          {% endif %}
+          
+          {% if ticket.status != 'new' %}
+          <form method="POST" action="{{ url_for('update_support_status', ticket_id=ticket.id, status='new') }}" style="display: inline;">
+            <button type="submit" class="btn-action">🔄 Mark as New</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="empty-state">
+      <h2>No support tickets!</h2>
+      <p>All quiet on the support front. Great job!</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
