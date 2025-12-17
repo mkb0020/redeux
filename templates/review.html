@@ -5,6 +5,33 @@
 
 {% block extra_styles %}
 <style>
+    .alert-box {
+    background: rgba(115, 1, 50, 0.3);
+    border: 2px solid var(--RadiationRed);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 20px rgba(115, 1, 50, 0.4);
+  }
+
+  .alert-box h3 {
+    color: var(--NuclearFuscia);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .alert-box p {
+    color: var(--White);
+    margin: 0.5rem 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+  }
+  
+  
   .contact-container {
     max-width: 800px;
     margin: 0 auto;
@@ -271,9 +298,11 @@
   </div>
 
   <div class="contact-card">
-    <div class="info-box">
+    <div class="alert-box">
+      <h3>⚠️ SERVICE TEMPORARILY DOWN - SUBMISSIONS WILL NOT BE RECEIVED</h3>
+    <!--<div class="info-box">
       <p><strong>I want to make this game the best thing since sliced catnip!</strong></p>
-      <p>Your feedback helps me get there. Feel free to be honest - bugs and constructive criticism help me improve.</p>
+      <p>Your feedback helps me get there. Feel free to be honest - bugs and constructive criticism help me improve.</p>-->
     </div>
 
     <form method="POST" action="{{ url_for('review') }}">
