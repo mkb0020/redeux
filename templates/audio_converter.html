@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+{% block title %}Audio Converter - mkb0020{% endblock %}
+{% block description %}Convert your audio files to MP3 format{% endblock %}
+{% block help_menu_items %}
+<button id="openConverterHelp">How to use</button>
+{% endblock %}
+{% block modal_title %}🎵{% endblock %}
+{% block modal_content %}
+  <div class="format-info">
+    <h3>Supported Formats</h3>
+    <div class="format-list">
+      <div class="format-badge">M4A</div>
+      <div class="format-badge">WAV</div>
+      <div class="format-badge">FLAC</div>
+      <div class="format-badge">OGG</div>
+      <div class="format-badge">AAC</div>
+      <div class="format-badge">WMA</div>
+    </div>
+  </div>
+    <h3>Features</h3>
+    <ul>
+            <li>High-quality 192kbps MP3 output</li>
+            <li>Fast conversion using FFmpeg</li>
+            <li>Your files are deleted from the server immediately after conversion</li>
+            <li>No registration or account required</li>
+    </ul>
+    <h3>💡Larger files may take longer to convert</h3>
+    <h3>🔒 Privacy</h3>
+    <p>Your audio files are processed temporarily and deleted immediately after conversion. We don't store or share your files.</p>
+{% endblock %}
+
+{% block extra_modals %}
+<div id="converterHelpModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1 class="modal-title">🎵 HOW TO USE</h1>
+      <button class="modal-close" onclick="closeConverterHelp()">X</button>
+    </div>
+    <div class="modal-body">
+        <ol style="margin-left: 2rem; font-family: Arial, sans-serif;">
+        <li>Click <strong>"Choose File"</strong> and select your audio file</li>
+        <li>Click <strong>"Convert to MP3"</strong> to start the conversion</li>
+        <li>Your converted file will download automatically</li>
+        <li>The original file remains on your device</li>
+        </ol>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+   .Niels-zone {
+    text-align: center;
+  }
+
+  .converter-container {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--BosonBlue), var(--ProtonPurple));
+    border: 3px solid var(--VortexViolet);
+    border-radius: 25px;
+    box-shadow: 0 0 60px var(--VortexGlow2);
+    position: relative;
+    z-index: 20;
+  }
+
+  .converter-title {
+    font-family: 'SpaceLetters', sans-serif;
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, var(--ParticlePink), var(--NuclearFuscia), var(--AlphaAqua));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: neonPulse 2s ease-in-out infinite alternate;
+  }
+
+  .converter-subtitle {
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.3rem;
+    text-align: center;
+    color: var(--AlphaAqua);
+    margin-bottom: 3rem;
+    text-shadow: 0 0 10px var(--AlphaGlow2);
+  }
+
+  .upload-zone {
+    background: rgba(0, 0, 0, 0.4);
+    border: 3px dashed var(--PlasmaPurple);
+    border-radius: 15px;
+    padding: 3rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+  }
+
+  .upload-zone:hover {
+    border-color: var(--NuclearFuscia);
+    background: rgba(131, 12, 222, 0.1);
+    box-shadow: 0 0 30px var(--VortexGlow2);
+  }
+
+  .upload-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  .upload-text {
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.3rem;
+    color: var(--White);
+    margin-bottom: 1rem;
+  }
+
+  .file-input-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  .file-input-label {
+    display: inline-block;
+    padding: 15px 35px;
+    background: linear-gradient(45deg, var(--VortexViolet), var(--PlasmaPurple));
+    color: var(--White);
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.2rem;
+    border: 2px solid var(--ParticlePink);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px var(--VortexGlow2);
+  }
+
+  .file-input-label:hover {
+    background: linear-gradient(45deg, var(--NuclearFuscia), var(--AlphaAqua));
+    transform: scale(1.05);
+    box-shadow: 0 0 40px var(--NuclearGlow3);
+  }
+
+  #audioFile {
+    display: none;
+  }
+
+  .file-name-display {
+    margin-top: 1.5rem;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.1rem;
+    color: var(--AlphaAqua);
+    min-height: 1.5rem;
+  }
+
+  .convert-btn {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(45deg, var(--NuclearFuscia), var(--AlphaAqua));
+    color: var(--BosonBlue);
+    font-family: 'SpaceLetters', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border: 3px solid var(--ParticlePink);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 30px var(--NuclearGlow2);
+    margin-top: 2rem;
+  }
+
+  .convert-btn:hover:not(:disabled) {
+    background: linear-gradient(45deg, var(--AlphaAqua), var(--NuclearFuscia));
+    transform: translateY(-3px);
+    box-shadow: 0 0 50px var(--AlphaGlow3);
+  }
+
+  .convert-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .format-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(131, 12, 222, 0.15);
+    border-left: 5px solid var(--VortexViolet);
+    border-radius: 10px;
+  }
+
+  .format-info h3 {
+    font-family: 'GothNerd', sans-serif;
+    color: var(--NuclearFuscia);
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px var(--NuclearGlow2);
+  }
+
+  .format-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .format-badge {
+    background: var(--ProtonPurple);
+    color: var(--AlphaAqua);
+    padding: 0.8rem;
+    border-radius: 8px;
+    text-align: center;
+    font-family: 'GothNerd', sans-serif;
+    font-size: 1.1rem;
+    border: 1px solid var(--VortexViolet);
+    transition: all 0.3s ease;
+  }
+
+  .format-badge:hover {
+    background: var(--VortexViolet);
+    box-shadow: 0 0 20px var(--VortexGlow2);
+  }
+
+  .loading-spinner {
+    display: none;
+    text-align: center;
+    margin-top: 1rem;
+    font-family: 'GothNerd', sans-serif;
+    color: var(--AlphaAqua);
+    font-size: 1.2rem;
+  }
+
+  .loading-spinner.active {
+    display: block;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--ProtonPurple);
+    border-top: 4px solid var(--NuclearFuscia);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 1rem auto;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 768px) {
+    .converter-container {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+
+    .converter-title {
+      font-size: 2rem;
+    }
+
+    .converter-subtitle {
+      font-size: 1.1rem;
+    }
+
+    .upload-zone {
+      padding: 2rem 1rem;
+    }
+
+    .format-list {
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="converter-container">
+    <div class = "Niels-zone">
+        <h1><img src="static/images/DJNiels.png"></h1>
+    </div>
+    <h1 class="converter-title">🎵 MP3 CONVERTER 🎵</h1>
+
+  <form method="POST" action="{{ url_for('convert') }}" enctype="multipart/form-data" id="converterForm">
+    <div class="upload-zone">
+      <div class="upload-icon">📂</div>
+      <p class="upload-text">Select an audio file to convert</p>
+      
+      <div class="file-input-wrapper">
+        <label for="audioFile" class="file-input-label">
+          Choose File
+        </label>
+        <input 
+          type="file" 
+          name="audio" 
+          id="audioFile" 
+          accept=".m4a,.wav,.flac,.ogg,.aac,.wma"
+          required
+        >
+      </div>
+      
+      <div class="file-name-display" id="fileNameDisplay"></div>
+    </div>
+
+    <button type="submit" class="convert-btn" id="convertBtn" disabled>
+      ⚡ CONVERT TO MP3
+    </button>
+
+    <div class="loading-spinner" id="loadingSpinner">
+      <div class="spinner"></div>
+      <p>Converting your audio file...</p>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const fileInput = document.getElementById('audioFile');
+  const fileNameDisplay = document.getElementById('fileNameDisplay');
+  const convertBtn = document.getElementById('convertBtn');
+  const converterForm = document.getElementById('converterForm');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+
+  fileInput.addEventListener('change', function() {
+    if (this.files.length > 0) {
+      const fileName = this.files[0].name;
+      const fileSize = (this.files[0].size / (1024 * 1024)).toFixed(2);
+      fileNameDisplay.textContent = `📄 ${fileName} (${fileSize} MB)`;
+      convertBtn.disabled = false;
+    } else {
+      fileNameDisplay.textContent = '';
+      convertBtn.disabled = true;
+    }
+  });
+
+  converterForm.addEventListener('submit', async function (e) {
+  e.preventDefault(); 
+
+  loadingSpinner.classList.add('active');
+  convertBtn.disabled = true;
+  convertBtn.textContent = '⚡ CONVERTING...';
+
+  const formData = new FormData(converterForm);
+
+  try {
+    const response = await fetch("/convert", {
+      method: "POST",
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error("Conversion failed");
+    }
+
+    const blob = await response.blob();
+
+    // Trigger download
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "converted.mp3";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+    // 🎉 SUCCESS UI
+    loadingSpinner.classList.remove('active');
+    convertBtn.textContent = "✅ CONVERSION COMPLETE!";
+    
+    setTimeout(() => {
+      convertBtn.textContent = "⚡ CONVERT TO MP3";
+      convertBtn.disabled = false;
+    }, 3000);
+
+  } catch (err) {
+    loadingSpinner.classList.remove('active');
+    convertBtn.textContent = "❌ ERROR";
+    convertBtn.disabled = false;
+    alert("Something went wrong during conversion.");
+  }
+});
+
+  document.getElementById('openConverterHelp').addEventListener('click', function() {
+    document.getElementById('helpModal').style.display = 'none';
+    document.getElementById('converterHelpModal').style.display = 'flex';
+    document.querySelector('.help-dropdown').classList.remove('active');
+  });
+
+  function closeConverterHelp() {
+    document.getElementById('converterHelpModal').style.display = 'none';
+  }
+
+  document.getElementById('converterHelpModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeConverterHelp();
+    }
+  });
+</script>
+{% endblock %}
