@@ -1,12 +1,14 @@
 import pandas as pd
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
 import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from threading import Thread
 from functools import wraps
+import uuid
+import subprocess
 
 from db_helpers import (
     NewContactSubmission, 
@@ -181,6 +183,9 @@ def SendGameFeedbackEmailAsync(feedback_data):
     thread = Thread(target=SendGameFeedbackEmail, args=(feedback_data,))
     thread.daemon = True
     thread.start()
+
+
+
 
 
 # ============================================ PUBLIC PAGE ROUTES ============================================
@@ -510,6 +515,76 @@ def delete_wishlist_item(wishlist_id):
         flash(f'Error deleting item: {str(e)}', 'error')
     
     return redirect(url_for('admin_wishlist'))
+
+
+# ============================================ AUDIO CONVERTER ============================================
+@app.route("/audio-converter")
+def audio_converter():
+    return render_template("audio_converter.html")
+
+@app.route("/convert", methods=["POST"])
+def convert():
+    file = request.files.get("audio")
+    if not file:
+        flash("No file uploaded!", "error")
+        return redirect(url_for('audio_converter'))
+    
+    filename = file.filename.lower() # CHECK FILE EXTENSION
+    allowed_extensions = ['.m4a', '.wav', '.flac', '.ogg', '.aac', '.wma']
+    if not any(filename.endswith(ext) for ext in allowed_extensions):
+        flash("Invalid file type. Please upload an audio file.", "error")
+        return redirect(url_for('audio_converter'))
+    
+    input_ext = os.path.splitext(filename)[1] # UNIQUE FILE NAMES TO AVOID COLLISIONS
+    input_name = f"{uuid.uuid4()}{input_ext}"
+    output_name = f"{uuid.uuid4()}.mp3"
+    
+    UPLOAD_FOLDER = "uploads"
+    OUTPUT_FOLDER = "outputs"
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+    
+    input_path = os.path.join(UPLOAD_FOLDER, input_name)
+    output_path = os.path.join(OUTPUT_FOLDER, output_name)
+    
+    try:
+        file.save(input_path)
+        
+        subprocess.run([ # CONVERT USING FFmpeg
+           "ffmpeg", "-i", input_path,
+           "-vn", "-ab", "192k", output_path
+           # r"C:\Users\mkb00\ffmpeg\bin\ffmpeg.exe", "-i", input_path,
+           # "-vn", "-ab", "192k", output_path
+        ], check=True, capture_output=True)
+        
+        response = send_file( # SERVE FILES FOR DOWNLOAD
+            output_path, 
+            as_attachment=True, 
+            download_name=f"converted_{os.path.splitext(filename)[0]}.mp3"
+        )
+        
+        @response.call_on_close # CLEAN UP TEMP FILES
+        def cleanup():
+            try:
+                if os.path.exists(input_path):
+                    os.remove(input_path)
+                if os.path.exists(output_path):
+                    os.remove(output_path)
+            except:
+                pass
+        
+        return response
+        
+    except subprocess.CalledProcessError as e:
+        flash(f"Conversion failed: {e}", "error") # CLEANUP ON ERROR
+        if os.path.exists(input_path):
+            os.remove(input_path)
+        if os.path.exists(output_path):
+            os.remove(output_path)
+        return redirect(url_for('audio_converter'))
+    except Exception as e:
+        flash(f"Error: {str(e)}", "error")
+        return redirect(url_for('audio_converter'))
 
 # ============================================ MAIN ============================================
 if __name__ == "__main__":
